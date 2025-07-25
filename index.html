@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rell Makalah AI</title>
+    <!-- Tailwind CSS CDN untuk styling yang cepat dan responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Menggunakan font Inter untuk tampilan modern */
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #f0f4f8; /* Latar belakang abu-abu terang */
+            color: #334155; /* Warna teks utama */
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #334155;
+        }
+        .form-group input[type="text"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        .form-group input[type="text"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .btn-primary {
+            background-color: #3b82f6;
+            color: #ffffff;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: fit-content;
+            align-self: center;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+            color: #475569;
+        }
+        .loading-indicator.active {
+            display: block;
+        }
+        .result-area {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            min-height: 200px;
+            white-space: pre-wrap; /* Mempertahankan spasi dan baris baru */
+            word-wrap: break-word; /* Memecah kata panjang */
+            color: #1e293b;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-top: 1.5rem;
+        }
+        .result-area h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+        .warning-message {
+            background-color: #fffbeb; /* Kuning sangat terang */
+            border-left: 4px solid #f59e0b; /* Kuning oranye */
+            color: #92400e; /* Coklat oranye */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+        .copy-button {
+            background-color: #10b981; /* Warna hijau */
+            color: #ffffff;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+            width: fit-content;
+            align-self: flex-end; /* Posisikan di kanan bawah */
+            margin-top: 1rem;
+        }
+        .copy-button:hover {
+            background-color: #059669; /* Warna hijau lebih gelap saat hover */
+            transform: translateY(-2px);
+        }
+        .message-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 1000;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Styling untuk kerangka yang dihasilkan */
+        #generatedOutlineContainer {
+            background-color: #e0e7ff; /* Latar belakang biru muda */
+            border: 1px solid #93c5fd; /* Border biru */
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #1e3a8a; /* Warna teks biru gelap */
+        }
+        #generatedOutlineContainer h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1e3a8a;
+        }
+        #outlineContent ul {
+            list-style-type: decimal; /* Menggunakan angka untuk daftar utama */
+            margin-left: 1.5rem;
+        }
+        #outlineContent ul ul {
+            list-style-type: lower-alpha; /* Menggunakan huruf untuk sub-daftar */
+            margin-left: 1.5rem;
+        }
+        #outlineContent ul ul ul {
+            list-style-type: lower-roman; /* Menggunakan angka romawi untuk sub-sub-daftar */
+            margin-left: 1.5rem;
+        }
+        #outlineContent li {
+            margin-bottom: 0.4rem;
+        }
+
+        /* Styling untuk Bab */
+        .bab-heading {
+            font-size: 2.2rem; /* Ukuran lebih besar untuk BAB */
+            font-weight: 800;
+            color: #1a202c; /* Warna teks sangat gelap */
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        /* Styling untuk Daftar Isi, Catatan Kaki, Daftar Pustaka */
+        .section-heading {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .list-unstyled {
+            list-style: none;
+            padding-left: 0;
+        }
+        .footnote-ref {
+            vertical-align: super;
+            font-size: 0.75em;
+            color: #3b82f6;
+            text-decoration: none;
+            margin-left: 2px;
+        }
+        .footnote-ref:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-extrabold text-gray-800 text-center mb-0">
+            Rell Makalah AI
+        </h1>
+        <p class="text-xs text-gray-500 text-center opacity-70 mt-1 mb-4">
+            own by Ver3l4U
+        </p>
+
+        <p class="text-md text-gray-600 text-center mb-6">
+            Masukkan judul dan kerangka makalah Anda (opsional), lalu biarkan AI membantu menyusun draf awal.
+        </p>
+
+        <div class="warning-message">
+            **Penting:** Makalah yang dihasilkan adalah draf awal. Anda **wajib** melakukan riset mendalam,
+            memeriksa fakta, menambahkan sitasi yang akurat, dan melakukan revisi menyeluruh
+            sebelum menggunakan atau menyerahkan makalah ini.
+        </div>
+
+        <div class="form-group mt-6">
+            <label for="judulMakalah">Judul Makalah:</label>
+            <input type="text" id="judulMakalah" placeholder="Contoh: Dampak Teknologi AI terhadap Masa Depan Pendidikan">
+        </div>
+
+        <div class="form-group">
+            <label for="kerangkaMakalah">Kerangka Makalah / Poin Utama (opsional, pisahkan dengan baris baru):</label>
+            <textarea id="kerangkaMakalah" rows="8" placeholder="Contoh:
+1. Pendahuluan
+   a. Latar Belakang
+   b. Rumusan Masalah
+   c. Tujuan Penulisan
+2. Tinjauan Pustaka
+   a. Definisi AI dalam Pendidikan
+   b. Teori Pembelajaran Digital
+3. Pembahasan
+   a. Integrasi AI dalam Kurikulum
+   b. Tantangan Implementasi AI
+   c. Peluang AI untuk Personalisasi Pembelajaran
+4. Kesimpulan
+   a. Ringkasan Temuan
+   b. Saran dan Implikasi"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="panjangMakalah">Panjang Makalah (opsional):</label>
+            <select id="panjangMakalah">
+                <option value="pendek">Pendek (sekitar 500 kata)</option>
+                <option value="sedang" selected>Sedang (sekitar 1000 kata)</option>
+                <option value="panjang">Panjang (sekitar 1500 kata)</option>
+                <option value="3000_kata">3000 kata</option>
+                <option value="5000_kata">5000 kata</option>
+            </select>
+        </div>
+
+        <button id="generateBtn" class="btn-primary">
+            Buat Makalah
+        </button>
+
+        <div id="loadingIndicator" class="loading-indicator">
+            Memuat... Mohon tunggu sebentar.
+        </div>
+
+        <div class="result-area hidden" id="resultArea">
+            <h2>Draf Makalah Anda:</h2>
+            <div id="generatedOutlineContainer" class="hidden">
+                <h3>Kerangka Makalah yang Dihasilkan:</h3>
+                <div id="outlineContent" class="text-gray-700">
+                    <!-- Outline will go here -->
+                </div>
+            </div>
+            <div id="makalahContent" class="text-gray-800">
+                <!-- Konten makalah yang dihasilkan AI akan muncul di sini -->
+            </div>
+            <button id="copyContentBtn" class="copy-button">
+                Salin Konten
+            </button>
+        </div>
+    </div>
+
+    <div id="messageBox" class="message-box"></div>
+
+    <script>
+        // Fungsi untuk menampilkan pesan temporer
+        function showMessage(message, duration = 2000) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, duration);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const judulMakalahInput = document.getElementById('judulMakalah');
+            const kerangkaMakalahTextarea = document.getElementById('kerangkaMakalah');
+            const panjangMakalahSelect = document.getElementById('panjangMakalah');
+            const generateBtn = document.getElementById('generateBtn');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const resultArea = document.getElementById('resultArea');
+            const generatedOutlineContainer = document.getElementById('generatedOutlineContainer');
+            const outlineContentDiv = document.getElementById('outlineContent');
+            const makalahContentDiv = document.getElementById('makalahContent');
+            const copyContentBtn = document.getElementById('copyContentBtn');
+
+            generateBtn.addEventListener('click', async () => {
+                const judul = judulMakalahInput.value.trim();
+                const kerangka = kerangkaMakalahTextarea.value.trim();
+                const panjang = panjangMakalahSelect.value;
+
+                if (!judul) {
+                    showMessage('Harap masukkan judul makalah.');
+                    return;
+                }
+
+                loadingIndicator.classList.add('active');
+                generateBtn.disabled = true;
+                resultArea.classList.add('hidden'); // Sembunyikan area hasil sebelumnya
+                generatedOutlineContainer.classList.add('hidden'); // Sembunyikan kerangka sebelumnya
+
+                try {
+                    let prompt = `Buatkan draf makalah akademik berdasarkan informasi berikut:\n\n`;
+                    prompt += `Judul: ${judul}\n\n`;
+                    
+                    if (kerangka) { // Hanya tambahkan kerangka jika tidak kosong
+                        prompt += `Kerangka yang diberikan: ${kerangka}\n\n`;
+                        prompt += `Ulangi kerangka yang diberikan dalam format daftar bernomor atau berpoin sederhana di bagian "**KERANGKA MAKALAH:**", dan kemudian kembangkan isinya di bagian "**ISI MAKALAH:**".\n\n`;
+                    } else {
+                        prompt += `Buat kerangka makalah yang relevan secara otomatis berdasarkan judul dalam format daftar bernomor atau berpoin sederhana di bagian "**KERANGKA MAKALAH:**", dan kemudian kembangkan isinya di bagian "**ISI MAKALAH:**".\n\n`;
+                    }
+
+                    let wordCountHint = '';
+                    if (panjang === 'pendek') {
+                        wordCountHint = 'Isi makalah harus sekitar 500 kata.';
+                    } else if (panjang === 'sedang') {
+                        wordCountHint = 'Isi makalah harus sekitar 1000 kata.';
+                    } else if (panjang === 'panjang') {
+                        wordCountHint = 'Isi makalah harus sekitar 1500 kata.';
+                    } else if (panjang === '3000_kata') {
+                        wordCountHint = 'Isi makalah harus sekitar 3000 kata. Berikan detail yang komprehensif untuk setiap bagian.';
+                    } else if (panjang === '5000_kata') {
+                        wordCountHint = 'Isi makalah harus sekitar 5000 kata. Berikan detail yang sangat komprehensif dan mendalam untuk setiap bagian.';
+                    }
+                    prompt += `${wordCountHint}\n\n`;
+                    prompt += `Gunakan format penulisan akademik yang standar dengan "Daftar Isi" di awal, diikuti oleh Bab (BAB I, BAB II, dst.) dan sub-judul.`;
+                    prompt += ` Untuk setiap beberapa paragraf, sisipkan catatan kaki placeholder seperti '[1]', '[2]', dst. di akhir kalimat yang relevan.`;
+                    prompt += ` Di bagian akhir makalah, setelah semua bab, sertakan bagian '**CATATAN KAKI:**' yang berisi daftar catatan kaki placeholder dan deskripsi singkatnya (misalnya, '1. Catatan kaki tentang definisi X.').`;
+                    prompt += ` Setelah itu, sertakan bagian '**DAFTAR PUSTAKA:**' dengan setidaknya 3-5 entri placeholder yang relevan (misalnya, 'Nama Penulis. (Tahun). Judul Buku/Artikel. Penerbit/Jurnal.').`;
+                    prompt += ` **Penting: Jangan sertakan sitasi atau referensi palsu. Jika Anda perlu menyebutkan sumber, gunakan placeholder seperti "[Sumber: Nama Penulis, Tahun]" atau "[Referensi diperlukan]".**`;
+                    prompt += `\n\n**KERANGKA MAKALAH:**\n`; // Marker untuk kerangka
+                    prompt += `\n**ISI MAKALAH:**\n`; // Marker untuk isi
+
+                    // Panggil Gemini API
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; // API key akan disediakan oleh runtime Canvas
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const rawText = result.candidates[0].content.parts[0].text;
+                        
+                        // Pisahkan kerangka, isi makalah, catatan kaki, dan daftar pustaka
+                        const outlineMarker = "**KERANGKA MAKALAH:**";
+                        const contentMarker = "**ISI MAKALAH:**";
+                        const footnotesMarker = "**CATATAN KAKI:**";
+                        const bibliographyMarker = "**DAFTAR PUSTAKA:**";
+
+                        let outlineText = '';
+                        let makalahText = '';
+                        let footnotesText = '';
+                        let bibliographyText = '';
+
+                        // Split by markers
+                        const parts = rawText.split(outlineMarker);
+                        if (parts.length > 1) {
+                            const contentAndBeyond = parts[1].split(contentMarker);
+                            outlineText = contentAndBeyond[0].trim();
+                            if (contentAndBeyond.length > 1) {
+                                const footnotesAndBeyond = contentAndBeyond[1].split(footnotesMarker);
+                                makalahText = footnotesAndBeyond[0].trim();
+                                if (footnotesAndBeyond.length > 1) {
+                                    const bibliographyAndBeyond = footnotesAndBeyond[1].split(bibliographyMarker);
+                                    footnotesText = bibliographyAndBeyond[0].trim();
+                                    if (bibliographyAndBeyond.length > 1) {
+                                        bibliographyText = bibliographyAndBeyond[1].trim();
+                                    }
+                                }
+                            }
+                        } else {
+                            // Fallback if markers are not found, assume entire text is content
+                            makalahText = rawText;
+                            outlineText = "Kerangka tidak dapat diekstrak secara otomatis. Silakan lihat isi makalah.";
+                            footnotesText = "Catatan kaki tidak dapat diekstrak secara otomatis.";
+                            bibliographyText = "Daftar pustaka tidak dapat diekstrak secara otomatis.";
+                        }
+
+                        // Format kerangka makalah
+                        let formattedOutline = outlineText
+                            .replace(/^\d+\.\s*(.*)$/gm, '<li>$1</li>') // Nomor
+                            .replace(/^[a-z]\.\s*(.*)$/gm, '<li>$1</li>') // Huruf
+                            .replace(/^\-\s*(.*)$/gm, '<li>$1</li>'); // Bullet
+                        
+                        if (formattedOutline.includes('<li>')) {
+                            formattedOutline = `<ul>${formattedOutline}</ul>`;
+                            formattedOutline = formattedOutline.replace(/<\/li>\s*<li>/g, '</li><li>');
+                            formattedOutline = formattedOutline.replace(/<li>\s*([a-z]\.)/g, '<ul><li>$1');
+                            formattedOutline = formattedOutline.replace(/(<\/li>)(?!.*<li>)/g, '</li></ul>');
+                        } else {
+                            formattedOutline = `<p>${outlineText}</p>`;
+                        }
+
+                        outlineContentDiv.innerHTML = formattedOutline;
+                        generatedOutlineContainer.classList.remove('hidden');
+
+                        // Format isi makalah
+                        let formattedMakalah = makalahText
+                            .replace(/^(Daftar Isi)$/gmi, '<h2 class="section-heading">$1</h2>') // Daftar Isi
+                            .replace(/^(BAB\s[IVXLCDM]+\s*:\s*.*)$/gm, '<h2 class="bab-heading">$1</h2>') // Menangkap BAB I, BAB II, dst.
+                            .replace(/^### (.*)$/gm, '<h3 class="text-2xl font-semibold mt-6 mb-3">$1</h3>') // Sub-judul H3
+                            .replace(/^## (.*)$/gm, '<h2 class="text-xl font-semibold mt-5 mb-2">$1</h2>') // Sub-judul H2 (jika ada)
+                            .replace(/^# (.*)$/gm, '<h1 class="text-3xl font-bold mt-8 mb-4">$1</h1>'); // Judul H1 (jika ada)
+                        
+                        // Format catatan kaki placeholder [1], [2]
+                        formattedMakalah = formattedMakalah.replace(/\[(\d+)\]/g, '<sup class="footnote-ref">[$1]</sup>');
+
+                        formattedMakalah = formattedMakalah.replace(/^\* (.*)$/gm, '<li>$1</li>');
+                        formattedMakalah = formattedMakalah.replace(/(\n<li>.*<\/li>)+/gs, '<ul class="list-disc ml-6 mb-4">$1</ul>');
+
+                        formattedMakalah = formattedMakalah.split('\n\n').map(p => {
+                            if (p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<div')) {
+                                return p;
+                            }
+                            return `<p class="mb-4">${p.trim()}</p>`;
+                        }).join('');
+
+                        // Tambahkan Catatan Kaki
+                        if (footnotesText) {
+                            formattedMakalah += `<h2 class="section-heading">Catatan Kaki</h2>`;
+                            formattedMakalah += `<ul class="list-unstyled text-gray-700">`;
+                            footnotesText.split('\n').forEach(line => {
+                                if (line.trim()) {
+                                    formattedMakalah += `<li>${line.trim()}</li>`;
+                                }
+                            });
+                            formattedMakalah += `</ul>`;
+                        }
+
+                        // Tambahkan Daftar Pustaka
+                        if (bibliographyText) {
+                            formattedMakalah += `<h2 class="section-heading">Daftar Pustaka</h2>`;
+                            formattedMakalah += `<ul class="list-unstyled text-gray-700">`;
+                            bibliographyText.split('\n').forEach(line => {
+                                if (line.trim()) {
+                                    formattedMakalah += `<li>${line.trim()}</li>`;
+                                }
+                            });
+                            formattedMakalah += `</ul>`;
+                        }
+
+
+                        makalahContentDiv.innerHTML = formattedMakalah;
+                        resultArea.classList.remove('hidden'); // Tampilkan area hasil
+                    } else {
+                        showMessage('Gagal menghasilkan makalah. Coba lagi.');
+                        console.error('Unexpected API response structure:', result);
+                    }
+                } catch (error) {
+                    showMessage(`Terjadi kesalahan: ${error.message}.`);
+                    console.error('Error generating makalah content:', error);
+                } finally {
+                    loadingIndicator.classList.remove('active');
+                    generateBtn.disabled = false;
+                }
+            });
+
+            copyContentBtn.addEventListener('click', () => {
+                // Salin seluruh teks dari kerangka dan isi makalah
+                const outlineTextToCopy = outlineContentDiv.innerText;
+                const makalahTextToCopy = makalahContentDiv.innerText;
+                const fullTextToCopy = `Kerangka Makalah:\n${outlineTextToCopy}\n\nIsi Makalah:\n${makalahTextToCopy}`;
+
+                if (document.execCommand('copy')) {
+                    showMessage('Konten makalah (kerangka & isi) berhasil disalin!');
+                } else {
+                    showMessage('Gagal menyalin konten. Silakan salin secara manual.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
