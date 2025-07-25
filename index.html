@@ -370,6 +370,12 @@
                         body: JSON.stringify(payload)
                     });
 
+                    // Tambahkan penanganan kesalahan untuk respons HTTP
+                    if (!response.ok) {
+                        const errorBody = await response.text();
+                        throw new Error(`Kesalahan HTTP! Status: ${response.status}, Respons: ${errorBody}`);
+                    }
+
                     const result = await response.json();
 
                     if (result.candidates && result.candidates.length > 0 &&
@@ -419,12 +425,13 @@
                             .replace(/^\-\s*(.*)$/gm, '<li>$1</li>'); // Bullet
                         
                         if (formattedOutline.includes('<li>')) {
+                            // Crude way to handle nested lists, might need more robust parsing for complex outlines
                             formattedOutline = `<ul>${formattedOutline}</ul>`;
-                            formattedOutline = formattedOutline.replace(/<\/li>\s*<li>/g, '</li><li>');
-                            formattedOutline = formattedOutline.replace(/<li>\s*([a-z]\.)/g, '<ul><li>$1');
-                            formattedOutline = formattedOutline.replace(/(<\/li>)(?!.*<li>)/g, '</li></ul>');
+                            formattedOutline = formattedOutline.replace(/<\/li>\s*<li>/g, '</li><li>'); // Clean up extra spaces
+                            formattedOutline = formattedOutline.replace(/<li>\s*([a-z]\.)/g, '<ul><li>$1'); // Basic nested list for a. b.
+                            formattedOutline = formattedOutline.replace(/(<\/li>)(?!.*<li>)/g, '</li></ul>'); // Close nested lists
                         } else {
-                            formattedOutline = `<p>${outlineText}</p>`;
+                            formattedOutline = `<p>${outlineText}</p>`; // Jika tidak ada list, tampilkan sebagai paragraf
                         }
 
                         outlineContentDiv.innerHTML = formattedOutline;
@@ -479,11 +486,11 @@
                         makalahContentDiv.innerHTML = formattedMakalah;
                         resultArea.classList.remove('hidden'); // Tampilkan area hasil
                     } else {
-                        showMessage('Gagal menghasilkan makalah. Coba lagi.');
+                        showMessage('Gagal menghasilkan makalah. Coba lagi. Respons API tidak terduga.');
                         console.error('Unexpected API response structure:', result);
                     }
                 } catch (error) {
-                    showMessage(`Terjadi kesalahan: ${error.message}.`);
+                    showMessage(`Terjadi kesalahan: ${error.message}. Silakan periksa konsol untuk detail.`);
                     console.error('Error generating makalah content:', error);
                 } finally {
                     loadingIndicator.classList.remove('active');
