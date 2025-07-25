@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rell Makalah AI</title>
+    <title>Rell Makalah AI - Generator Makalah Otomatis Online Gratis</title>
+    <!-- Deskripsi meta untuk SEO -->
+    <meta name="description" content="Rell Makalah AI adalah generator makalah otomatis yang membantu Anda menyusun draf makalah dengan cepat berdasarkan judul dan kerangka.">
     <!-- Tailwind CSS CDN untuk styling yang cepat dan responsif -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -361,7 +363,13 @@
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                     const payload = { contents: chatHistory };
-                    const apiKey = "AIzaSyAGPK4bhFmvUNs7ZauZOtJtESevSzhbUhw"; // API key akan disediakan oleh runtime Canvas
+                    // PENTING: GANTI INI DENGAN KUNCI API GOOGLE CLOUD ANDA SENDIRI!
+                    // Kunci API ini harus memiliki akses ke Generative Language API.
+                    // Contoh: const apiKey = "AIzaSyB-IniAdalahKunciAPIAndaYangValid";
+                    const apiKey = "AIzaSyAGPK4bhFmvUNs7ZauZOtJtESevSzhbUhw"; 
+                    // Jika Anda menjalankan ini di lingkungan Canvas, biarkan kosong.
+                    // Jika Anda menjalankan di GitHub Pages atau server Anda sendiri, Anda HARUS mengisi ini.
+
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                     const response = await fetch(apiUrl, {
@@ -373,7 +381,12 @@
                     // Tambahkan penanganan kesalahan untuk respons HTTP
                     if (!response.ok) {
                         const errorBody = await response.text();
-                        throw new Error(`Kesalahan HTTP! Status: ${response.status}, Respons: ${errorBody}`);
+                        // Lebih spesifik untuk kesalahan 401/403
+                        if (response.status === 401 || response.status === 403) {
+                            throw new Error(`Kesalahan Otorisasi API (Status: ${response.status}). Pastikan API Key Anda valid dan memiliki izin yang benar. Respons: ${errorBody}`);
+                        } else {
+                            throw new Error(`Kesalahan HTTP! Status: ${response.status}, Respons: ${errorBody}`);
+                        }
                     }
 
                     const result = await response.json();
