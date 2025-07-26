@@ -571,6 +571,24 @@
                 console.error("Firebase Init: Error parsing __firebase_config:", e);
                 console.log("Firebase Init: Failed to parse Canvas configuration, using hardcoded configuration.");
                 // PASTIKAN OBJEK firebaseConfig YANG ANDA SALIN DITEMPEL DI SINI
+                firebaseConfig = {
+                    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+ firebaseConfig = {
+  apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914",
+  authDomain: "rell-makalah-ai-project-89a29.firebaseapp.com",
+  projectId: "rell-makalah-ai-project-89a29",
+  storageBucket: "rell-makalah-ai-project-89a29.firebasestorage.app",
+  messagingSenderId: "862112040534",
+  appId: "1:862112040534:web:6bec7aea2c7ec63f3d5df7",
+  measurementId: "G-SJK5Q727K4"
+};
+                };
+            }
+        } else {
+            // Use hardcoded configuration if __firebase_config is not defined (e.g., on GitHub Pages)
+            console.log("Firebase Init: __firebase_config not found, using hardcoded configuration.");
+            // PASTIKAN OBJEK firebaseConfig YANG SAMA DITEMPEL DI SINI JUGA
+            firebaseConfig = {
                 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
  firebaseConfig = {
   apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914",
@@ -581,21 +599,7 @@
   appId: "1:862112040534:web:6bec7aea2c7ec63f3d5df7",
   measurementId: "G-SJK5Q727K4"
 };
-            }
-        } else {
-            // Use hardcoded configuration if __firebase_config is not defined (e.g., on GitHub Pages)
-            console.log("Firebase Init: __firebase_config not found, using hardcoded configuration.");
-            // PASTIKAN OBJEK firebaseConfig YANG SAMA DITEMPEL DI SINI JUGA
-            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
- firebaseConfig = {
-  apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914",
-  authDomain: "rell-makalah-ai-project-89a29.firebaseapp.com",
-  projectId: "rell-makalah-ai-project-89a29",
-  storageBucket: "rell-makalah-ai-project-89a29.firebasestorage.app",
-  messagingSenderId: "862112040534",
-  appId: "1:862112040534:web:6bec7aea2c7ec63f3d5df7",
-  measurementId: "G-SJK5Q727K4"
-};
+            };
         }
 
         // Function to display a temporary message
