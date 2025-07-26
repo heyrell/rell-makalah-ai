@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rell Makalah AI - Generator Makalah Otomatis Online Gratis</title>
     <meta name="google-site-verification" content="hc7xIt5KLo-DjPjK1E7aFJjOxEsPrnBbSU9hIByzmZc" />
-<!-- Deskripsi meta untuk SEO -->
+    <!-- Deskripsi meta untuk SEO -->
     <meta name="description" content="Rell Makalah AI adalah generator makalah otomatis yang membantu Anda menyusun draf makalah dengan cepat berdasarkan judul dan kerangka.">
     <!-- Google Fonts untuk tampilan futuristik -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -39,7 +39,8 @@
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            padding: 1rem; /* Padding responsif */
+            padding: 0; /* Hapus padding dari body untuk mobile */
+            margin: 0; /* Pastikan tidak ada margin default */
             box-sizing: border-box;
             overflow-x: hidden; /* Mencegah scroll horizontal */
         }
@@ -48,24 +49,27 @@
         .container {
             background-color: rgba(26, 26, 46, 0.8); /* Latar belakang semi-transparan */
             backdrop-filter: blur(8px); /* Efek blur pada latar belakang */
-            padding: 2rem; /* Padding responsif */
-            border-radius: 1.5rem; /* Sudut lebih membulat */
-            box-shadow: 0 0 30px rgba(0, 188, 212, 0.3), 0 0 60px rgba(142, 36, 170, 0.2); /* Efek glow */
+            padding: 2rem 1rem; /* Padding vertikal 2rem, horizontal 1rem untuk mobile */
+            border-radius: 0; /* Hapus border-radius di mobile agar full-width */
+            box-shadow: none; /* Hapus shadow di mobile */
             width: 100%; /* Selalu 100% lebar */
             max-width: 900px; /* Batasi lebar maksimum untuk desktop */
             display: flex;
             flex-direction: column;
             gap: 1.8rem; /* Jarak antar elemen lebih besar */
-            border: 1px solid rgba(0, 188, 212, 0.3); /* Border tipis */
+            border: none; /* Hapus border di mobile */
         }
 
-        /* Media query untuk desktop */
+        /* Media query untuk desktop (layar > 768px) */
         @media (min-width: 768px) {
             body {
-                padding: 2rem; /* Padding standar untuk desktop */
+                padding: 2rem; /* Tambahkan padding kembali untuk desktop */
             }
             .container {
-                padding: 3rem; /* Padding lebih besar untuk desktop */
+                padding: 3rem; /* Padding standar untuk desktop */
+                border-radius: 1.5rem; /* Terapkan border-radius untuk desktop */
+                box-shadow: 0 0 30px rgba(0, 188, 212, 0.3), 0 0 60px rgba(142, 36, 170, 0.2); /* Terapkan shadow untuk desktop */
+                border: 1px solid rgba(0, 188, 212, 0.3); /* Terapkan border untuk desktop */
             }
         }
 
@@ -450,7 +454,7 @@
                         wordCountHint = 'Isi makalah harus sekitar 1500 kata.';
                     } else if (panjang === '3000_kata') {
                         wordCountHint = 'Isi makalah harus sekitar 3000 kata. Berikan detail yang komprehensif untuk setiap bagian.';
-                    } else if (pananjang === '5000_kata') {
+                    } else if (panjang === '5000_kata') {
                         wordCountHint = 'Isi makalah harus sekitar 5000 kata. Berikan detail yang sangat komprehensif dan mendalam untuk setiap bagian.';
                     }
                     prompt += `${wordCountHint}\n\n`;
