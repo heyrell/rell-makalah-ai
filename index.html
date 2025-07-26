@@ -362,6 +362,56 @@
         .auth-buttons .btn-primary, .auth-buttons .btn-secondary {
             margin-top: 0.5rem; /* Reduce margin top for auth buttons */
         }
+        /* Styling untuk tombol premium */
+        .btn-premium {
+            background: linear-gradient(90deg, #ffc107, #ff8f00); /* Gradien emas/oranye */
+            color: #1a1a2e; /* Teks gelap */
+            font-weight: 700;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.5);
+            width: fit-content;
+            align-self: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
+        .btn-premium:hover {
+            background: linear-gradient(90deg, #ffeb3b, #ffc107);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(255, 235, 59, 0.6);
+        }
+        .btn-premium:disabled {
+            background: #6a6a8a;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+        /* Styling untuk opsi select yang dinonaktifkan */
+        option[disabled] {
+            color: #888;
+            font-style: italic;
+        }
+        /* Styling untuk custom word count input */
+        #customWordCountContainer {
+            display: none; /* Sembunyikan secara default */
+            margin-top: 1rem;
+            text-align: center;
+        }
+        #customWordCountContainer label {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            color: var(--light-text);
+        }
+        #customWordCountInput {
+            max-width: 200px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
@@ -391,6 +441,7 @@
                     <button id="registerBtn" class="btn-secondary">Daftar</button>
                     <button id="logoutBtn" class="btn-secondary hidden">Keluar</button>
                 </div>
+                <button id="upgradePremiumBtn" class="btn-premium hidden">Upgrade ke Premium!</button>
             </div>
         </div>
 
@@ -434,9 +485,16 @@
                 <option value="pendek">Pendek (sekitar 500 kata)</option>
                 <option value="sedang" selected>Sedang (sekitar 1000 kata)</option>
                 <option value="panjang">Panjang (sekitar 1500 kata)</option>
-                <option value="3000_kata">3000 kata</option>
-                <option value="5000_kata">5000 kata</option>
+                <option value="4000_kata">4000 kata</option>
+                <option value="4250_kata">4250 kata</option>
+                <option value="5000_kata" disabled>5000 kata (Premium)</option>
+                <option value="custom_premium" disabled>Kustom (5000-12000 kata, Premium)</option>
             </select>
+        </div>
+
+        <div id="customWordCountContainer" class="form-group">
+            <label for="customWordCountInput">Jumlah Kata Kustom (5000 - 12000):</label>
+            <input type="number" id="customWordCountInput" min="5000" max="12000" placeholder="Masukkan jumlah kata">
         </div>
 
         <button id="generateBtn" class="btn-primary">
@@ -470,12 +528,13 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
         // Global Firebase instances
         let app, auth, db, analytics;
         let userId = null; // Untuk menyimpan UID pengguna yang sedang login
+        let isUserPremium = false; // Status premium pengguna
 
         // Deklarasikan appId secara global di dalam cakupan modul
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -524,10 +583,79 @@
             }, duration);
         }
 
+        // Fungsi untuk memperbarui status UI premium
+        function updatePremiumUI(currentUser) { // Menerima objek user sebagai parameter
+            const panjangMakalahSelect = document.getElementById('panjangMakalah');
+            const customWordCountContainer = document.getElementById('customWordCountContainer');
+            const customWordCountInput = document.getElementById('customWordCountInput');
+            const upgradePremiumBtn = document.getElementById('upgradePremiumBtn');
+            const authStatus = document.getElementById('authStatus');
+
+            // Opsi yang selalu gratis
+            const freeOptions = ['pendek', 'sedang', 'panjang', '4000_kata', '4250_kata'];
+            // Opsi yang premium
+            const premiumOptionsValues = ['5000_kata', 'custom_premium'];
+
+            panjangMakalahSelect.querySelectorAll('option').forEach(option => {
+                if (freeOptions.includes(option.value)) {
+                    option.disabled = false;
+                    option.textContent = option.textContent.replace(' (Premium)', '');
+                } else if (premiumOptionsValues.includes(option.value)) {
+                    if (isUserPremium) {
+                        option.disabled = false;
+                        option.textContent = option.textContent.replace(' (Premium)', '');
+                    } else {
+                        option.disabled = true;
+                        if (!option.textContent.includes(' (Premium)')) {
+                            option.textContent += ' (Premium)';
+                        }
+                    }
+                }
+            });
+
+            // Atur visibilitas tombol upgrade
+            // Tampilkan tombol upgrade hanya jika pengguna login (bukan anonim) dan belum premium
+            if (currentUser && currentUser.email && !isUserPremium) {
+                upgradePremiumBtn.classList.remove('hidden');
+            } else {
+                upgradePremiumBtn.classList.add('hidden');
+            }
+
+            // Atur visibilitas dan status input kustom
+            if (panjangMakalahSelect.value === 'custom_premium' && isUserPremium) {
+                customWordCountContainer.style.display = 'block';
+                customWordCountInput.disabled = false;
+            } else {
+                customWordCountContainer.style.display = 'none';
+                customWordCountInput.disabled = true;
+                customWordCountInput.value = ''; // Bersihkan nilai saat disembunyikan
+            }
+
+            // Perbarui teks status autentikasi
+            if (currentUser && currentUser.email) { // Jika user login dengan email
+                authStatus.textContent = `Masuk sebagai: ${currentUser.email}`;
+            } else if (currentUser) { // Jika user login anonim
+                authStatus.textContent = `Masuk sebagai: Pengguna Anonim`;
+            } else { // Jika belum login
+                authStatus.textContent = `Anda belum masuk.`;
+            }
+
+            if (isUserPremium) {
+                if (currentUser && currentUser.email) {
+                    authStatus.textContent += ' (Premium)';
+                } else if (currentUser) {
+                    authStatus.textContent = `Masuk sebagai: Premium Anonim`;
+                }
+            }
+        }
+
+
         document.addEventListener('DOMContentLoaded', async () => {
             const judulMakalahInput = document.getElementById('judulMakalah');
             const kerangkaMakalahTextarea = document.getElementById('kerangkaMakalah');
             const panjangMakalahSelect = document.getElementById('panjangMakalah');
+            const customWordCountContainer = document.getElementById('customWordCountContainer');
+            const customWordCountInput = document.getElementById('customWordCountInput');
             const generateBtn = document.getElementById('generateBtn');
             const loadingIndicator = document.getElementById('loadingIndicator');
             const resultArea = document.getElementById('resultArea');
@@ -545,6 +673,7 @@
             const loginBtn = document.getElementById('loginBtn');
             const registerBtn = document.getElementById('registerBtn');
             const logoutBtn = document.getElementById('logoutBtn');
+            const upgradePremiumBtn = document.getElementById('upgradePremiumBtn'); // Tombol upgrade
 
             // Inisialisasi Firebase
             try {
@@ -563,7 +692,6 @@
                         console.log("Firebase Auth: Berhasil masuk dengan token kustom.");
                     } catch (tokenError) {
                         console.error("Firebase Auth: Gagal masuk dengan token kustom. Mencoba anonim. Error:", tokenError);
-                        // Jika token kustom gagal, coba masuk anonim sebagai fallback
                         await signInAnonymously(auth);
                         console.log("Firebase Auth: Berhasil masuk secara anonim setelah token kustom gagal.");
                     }
@@ -583,7 +711,6 @@
                 console.log("Firebase Auth State Changed. User:", user ? user.uid : "null");
                 if (user) {
                     userId = user.uid;
-                    authStatus.textContent = `Masuk sebagai: ${user.email || 'Pengguna Anonim'}`;
                     authStatus.classList.remove('logged-out');
                     authStatus.classList.add('logged-in');
                     loginBtn.classList.add('hidden');
@@ -610,19 +737,24 @@
                                     isPremium: false // Default non-premium
                                 });
                                 console.log("Firestore: Profil pengguna berhasil dibuat.");
+                                isUserPremium = false; // Set status premium
                             } else {
                                 console.log("Firestore: Profil pengguna sudah ada.");
+                                isUserPremium = userDocSnap.data().isPremium || false; // Ambil status premium dari Firestore
                             }
                         } catch (firestoreError) {
                             console.error("Firestore: Error saat mengakses atau membuat profil pengguna:", firestoreError);
                             showMessage(`Error Firestore: ${firestoreError.message}.`);
+                            isUserPremium = false; // Default ke non-premium jika ada error
                         }
                     } else {
                         console.warn("Firestore: Database atau App ID belum terinisialisasi. Tidak dapat menyimpan profil pengguna.");
+                        isUserPremium = false; // Default ke non-premium
                     }
+                    updatePremiumUI(user); // Perbarui UI setelah mendapatkan status premium, passing user object
                 } else {
                     userId = null;
-                    authStatus.textContent = `Anda belum masuk.`;
+                    isUserPremium = false; // Reset status premium saat logout
                     authStatus.classList.remove('logged-in');
                     authStatus.classList.add('logged-out');
                     loginBtn.classList.remove('hidden');
@@ -633,6 +765,7 @@
                     passwordInput.value = '';
                     passwordInput.disabled = false;
                     authTitle.textContent = "Masuk / Daftar";
+                    updatePremiumUI(null); // Perbarui UI saat logout, passing null for user
                 }
             });
 
@@ -725,12 +858,46 @@
                 }
             });
 
+            // Event Listener untuk Upgrade ke Premium
+            upgradePremiumBtn.addEventListener('click', async () => {
+                if (!userId) {
+                    showMessage('Anda harus masuk untuk meng-upgrade ke Premium.');
+                    return;
+                }
+                if (isUserPremium) {
+                    showMessage('Anda sudah menjadi anggota Premium!');
+                    return;
+                }
+
+                console.log("Premium: Mencoba meng-upgrade pengguna ke Premium untuk UID:", userId);
+                try {
+                    const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/profile/data`);
+                    await updateDoc(userDocRef, {
+                        isPremium: true,
+                        premiumActivatedAt: new Date()
+                    });
+                    isUserPremium = true; // Perbarui status premium lokal
+                    updatePremiumUI(auth.currentUser); // Perbarui UI, passing auth.currentUser
+                    showMessage('Selamat! Akun Anda sekarang Premium!');
+                    console.log("Premium: Pengguna berhasil di-upgrade ke Premium.");
+                } catch (error) {
+                    console.error("Premium: Error saat meng-upgrade ke Premium:", error);
+                    showMessage(`Gagal meng-upgrade ke Premium: ${error.message}`);
+                }
+            });
+
+            // Event Listener untuk perubahan pada dropdown panjang makalah
+            panjangMakalahSelect.addEventListener('change', () => {
+                updatePremiumUI(auth.currentUser); // Perbarui UI saat pilihan berubah, passing auth.currentUser
+            });
+
 
             // Logika pembuatan makalah (sama seperti sebelumnya, namun kini membutuhkan userId)
             generateBtn.addEventListener('click', async () => {
                 const judul = judulMakalahInput.value.trim();
                 const kerangka = kerangkaMakalahTextarea.value.trim();
                 const panjang = panjangMakalahSelect.value;
+                let finalWordCount = 0; // Untuk menyimpan jumlah kata akhir yang diminta
 
                 console.log("Generator: Tombol Buat Makalah diklik.");
                 if (!judul) {
@@ -746,6 +913,39 @@
                     return;
                 }
                 console.log("Generator: Pengguna terautentikasi (UID:", userId, "). Melanjutkan pembuatan makalah.");
+
+                // Cek fitur premium berdasarkan pilihan panjang
+                const premiumLengths = ['5000_kata', 'custom_premium'];
+                if (premiumLengths.includes(panjang) && !isUserPremium) {
+                    showMessage('Fitur ini hanya tersedia untuk anggota Premium. Silakan upgrade akun Anda.');
+                    console.warn("Generator: Pengguna non-premium mencoba mengakses fitur premium.");
+                    return;
+                }
+
+                // Tentukan jumlah kata akhir yang diminta
+                if (panjang === 'custom_premium') {
+                    const customValue = parseInt(customWordCountInput.value, 10);
+                    if (isNaN(customValue) || customValue < 5000 || customValue > 12000) {
+                        showMessage('Untuk panjang kustom, masukkan angka antara 5000 hingga 12000.');
+                        console.warn("Generator: Input jumlah kata kustom tidak valid.");
+                        return;
+                    }
+                    finalWordCount = customValue;
+                } else if (panjang === 'pendek') {
+                    finalWordCount = 500;
+                } else if (panjang === 'sedang') {
+                    finalWordCount = 1000;
+                } else if (panjang === 'panjang') {
+                    finalWordCount = 1500;
+                } else if (panjang === '4000_kata') {
+                    finalWordCount = 4000;
+                } else if (panjang === '4250_kata') {
+                    finalWordCount = 4250;
+                } else if (panjang === '5000_kata') {
+                    finalWordCount = 5000;
+                }
+                console.log("Generator: Jumlah kata yang diminta:", finalWordCount);
+
 
                 loadingIndicator.classList.add('active');
                 generateBtn.disabled = true;
@@ -763,19 +963,7 @@
                         prompt += `Buat kerangka makalah yang relevan secara otomatis berdasarkan judul dalam format daftar bernomor atau berpoin sederhana di bagian "**KERANGKA MAKALAH:**", dan kemudian kembangkan isinya di bagian "**ISI MAKALAH:**".\n\n`;
                     }
 
-                    let wordCountHint = '';
-                    if (panjang === 'pendek') {
-                        wordCountHint = 'Isi makalah harus sekitar 500 kata.';
-                    } else if (panjang === 'sedang') {
-                        wordCountHint = 'Isi makalah harus sekitar 1000 kata.';
-                    } else if (panjang === 'panjang') {
-                        wordCountHint = 'Isi makalah harus sekitar 1500 kata.';
-                    } else if (panjang === '3000_kata') {
-                        wordCountHint = 'Isi makalah harus sekitar 3000 kata. Berikan detail yang komprehensif untuk setiap bagian.';
-                    } else if (panjang === '5000_kata') {
-                        wordCountHint = 'Isi makalah harus sekitar 5000 kata. Berikan detail yang sangat komprehensif dan mendalam untuk setiap bagian.';
-                    }
-                    prompt += `${wordCountHint}\n\n`;
+                    prompt += `Isi makalah harus sekitar ${finalWordCount} kata.\n\n`;
                     prompt += `Gunakan format penulisan akademik yang standar dengan "Daftar Isi" di awal, diikuti oleh Bab (BAB I, BAB II, dst.) dan sub-judul.`;
                     prompt += ` Untuk setiap beberapa paragraf, sisipkan catatan kaki placeholder seperti '[1]', '[2]', dst. di akhir kalimat yang relevan.`;
                     prompt += ` Di bagian akhir makalah, setelah semua bab, sertakan bagian '**CATATAN KAKI:**' yang berisi daftar catatan kaki placeholder dan deskripsi singkatnya (misalnya, '1. Catatan kaki tentang definisi X.').`;
