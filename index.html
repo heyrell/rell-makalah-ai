@@ -472,14 +472,49 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
         // Global Firebase instances
-        let app, auth, db;
+        let app, auth, db, analytics;
         let userId = null; // Untuk menyimpan UID pengguna yang sedang login
 
-        // Deklarasikan appId dan firebaseConfig secara global di dalam cakupan modul
+        // Deklarasikan appId secara global di dalam cakupan modul
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        // Prioritaskan __firebase_config dari lingkungan Canvas jika tersedia.
+        // Jika tidak, gunakan konfigurasi yang di-hardcode (untuk GitHub Pages).
+        let firebaseConfig = {};
+        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+            try {
+                firebaseConfig = JSON.parse(__firebase_config);
+                console.log("Firebase: Menggunakan konfigurasi dari Canvas.");
+            } catch (e) {
+                console.error("Firebase: Error parsing __firebase_config:", e);
+                // Fallback ke konfigurasi hardcode jika parsing gagal
+                console.log("Firebase: Gagal parsing konfigurasi Canvas, menggunakan konfigurasi hardcode.");
+                firebaseConfig = {
+                    apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914", // GANTI DENGAN KUNCI API FIREBASE ANDA DARI KONSOL FIREBASE
+                    authDomain: "rell-makalah-ai-project-89a29.firebaseapp.com", // GANTI DENGAN AUTH DOMAIN ANDA
+                    projectId: "rell-makalah-ai-project-89a29", // GANTI DENGAN PROJECT ID ANDA
+                    storageBucket: "rell-makalah-ai-project-89a29.firebasestorage.app",
+                    messagingSenderId: "862112040534",
+                    appId: "1:862112040534:web:6bec7aea2c7ec63f3d5df7",
+                    measurementId: "G-SJK5Q727K4"
+                };
+            }
+        } else {
+            // Gunakan konfigurasi hardcode jika __firebase_config tidak didefinisikan (misal di GitHub Pages)
+            console.log("Firebase: __firebase_config tidak ditemukan, menggunakan konfigurasi hardcode.");
+            firebaseConfig = {
+                apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914", // GANTI DENGAN KUNCI API FIREBASE ANDA DARI KONSOL FIREBASE
+                authDomain: "rell-makalah-ai-project-89a29.firebaseapp.com", // GANTI DENGAN AUTH DOMAIN ANDA
+                projectId: "rell-makalah-ai-project-89a29", // GANTI DENGAN PROJECT ID ANDA
+                storageBucket: "rell-makalah-ai-project-89a29.firebasestorage.app",
+                messagingSenderId: "862112040534",
+                appId: "1:862112040534:web:6bec7aea2c7ec63f3d5df7",
+                measurementId: "G-SJK5Q727K4"
+            };
+        }
 
         // Fungsi untuk menampilkan pesan temporer
         function showMessage(message, duration = 2000) {
@@ -515,44 +550,32 @@
 
             // Inisialisasi Firebase
             try {
-                // Gunakan variabel global yang sudah dideklarasikan di luar DOMContentLoaded
-                if (!firebaseConfig.apiKey) {
-                    console.warn("Firebase config is missing API Key. Ensure __firebase_config is correctly set in the environment.");
-                    // FALLBACK UNTUK GITHUB PAGES:
-                    // Jika Anda menjalankan ini di GitHub Pages, Anda HARUS mengganti placeholder di bawah
-                    // dengan kredensial Firebase Anda yang sebenarnya dari Firebase Console.
-                    // Ini adalah KUNCI API FIREBASE yang BERBEDA dari Kunci API Generative Language.
-                    // Contoh:
-                    // firebaseConfig.apiKey = "AIzaSyB4_YOUR_FIREBASE_API_KEY_HERE";
-                    // firebaseConfig.authDomain = "your-project-id.firebaseapp.com";
-                    // firebaseConfig.projectId = "your-project-id";
-                    // ... tambahkan konfigurasi Firebase lainnya jika diperlukan untuk GitHub Pages
-
-                    // HANYA UNTUK DEBUGGING LOKAL DI GITHUB PAGES (Ganti dengan data Anda):
-                    // firebaseConfig.apiKey = "YOUR_FIREBASE_API_KEY_HERE";
-                    // firebaseConfig.authDomain = "YOUR_FIREBASE_AUTH_DOMAIN_HERE";
-                    // firebaseConfig.projectId = "YOUR_FIREBASE_PROJECT_ID_HERE";
-                }
-
+                console.log("Firebase: Memulai inisialisasi Firebase dengan config:", firebaseConfig);
                 app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
+                analytics = getAnalytics(app);
+                console.log("Firebase: Inisialisasi Firebase berhasil.");
 
-                // Autentikasi awal dengan token kustom dari Canvas atau anonim
+                console.log("Firebase: Memeriksa token autentikasi awal...");
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    console.log("Firebase: Mencoba masuk dengan token kustom.");
                     await signInWithCustomToken(auth, __initial_auth_token);
+                    console.log("Firebase: Berhasil masuk dengan token kustom.");
                 } else {
-                    // Jika tidak ada token kustom (misal di GitHub Pages), coba login anonim
+                    console.log("Firebase: Token kustom tidak ditemukan, mencoba masuk secara anonim.");
                     await signInAnonymously(auth);
+                    console.log("Firebase: Berhasil masuk secara anonim.");
                 }
 
             } catch (error) {
-                console.error("Error initializing Firebase or signing in:", error);
-                showMessage("Gagal menginisialisasi Firebase. Fitur akun mungkin tidak berfungsi.");
+                console.error("Firebase: Error saat inisialisasi atau masuk:", error);
+                showMessage(`Gagal menginisialisasi Firebase: ${error.message}. Fitur akun mungkin tidak berfungsi.`);
             }
 
             // Listener perubahan status autentikasi
             onAuthStateChanged(auth, async (user) => {
+                console.log("Firebase Auth State Changed. User:", user);
                 if (user) {
                     userId = user.uid;
                     authStatus.textContent = `Masuk sebagai: ${user.email || 'Pengguna Anonim'}`;
@@ -569,14 +592,18 @@
 
                     // Simpan data pengguna dasar di Firestore jika belum ada
                     const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/profile/data`);
+                    console.log("Firestore: Mencoba mendapatkan dokumen profil pengguna untuk UID:", userId);
                     const userDocSnap = await getDoc(userDocRef);
                     if (!userDocSnap.exists()) {
+                        console.log("Firestore: Profil pengguna tidak ditemukan, membuat yang baru.");
                         await setDoc(userDocRef, {
                             email: user.email || null,
                             createdAt: new Date(),
                             isPremium: false // Default non-premium
                         });
-                        console.log("User profile created in Firestore.");
+                        console.log("Firestore: Profil pengguna berhasil dibuat.");
+                    } else {
+                        console.log("Firestore: Profil pengguna sudah ada.");
                     }
                 } else {
                     userId = null;
@@ -599,18 +626,22 @@
                 const email = emailInput.value;
                 const password = passwordInput.value;
 
+                console.log("Auth: Mencoba mendaftar dengan email:", email);
                 if (!email || !password) {
                     showMessage('Email dan password harus diisi.');
+                    console.warn("Auth: Email atau password kosong saat pendaftaran.");
                     return;
                 }
                 if (password.length < 6) {
                     showMessage('Password minimal 6 karakter.');
+                    console.warn("Auth: Password terlalu pendek saat pendaftaran.");
                     return;
                 }
 
                 try {
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     const user = userCredential.user;
+                    console.log("Auth: Pendaftaran berhasil untuk user:", user.uid);
                     // Simpan data pengguna dasar di Firestore saat registrasi berhasil
                     const userDocRef = doc(db, `artifacts/${appId}/users/${user.uid}/profile/data`);
                     await setDoc(userDocRef, {
@@ -618,9 +649,10 @@
                         createdAt: new Date(),
                         isPremium: false
                     });
+                    console.log("Firestore: Profil pengguna dibuat setelah pendaftaran.");
                     showMessage('Registrasi berhasil! Anda sekarang masuk.');
                 } catch (error) {
-                    console.error("Error during registration:", error);
+                    console.error("Auth: Error saat pendaftaran:", error);
                     let errorMessage = "Gagal mendaftar. ";
                     if (error.code === 'auth/email-already-in-use') {
                         errorMessage += "Email sudah terdaftar.";
@@ -640,16 +672,19 @@
                 const email = emailInput.value;
                 const password = passwordInput.value;
 
+                console.log("Auth: Mencoba masuk dengan email:", email);
                 if (!email || !password) {
                     showMessage('Email dan password harus diisi.');
+                    console.warn("Auth: Email atau password kosong saat login.");
                     return;
                 }
 
                 try {
                     await signInWithEmailAndPassword(auth, email, password);
+                    console.log("Auth: Login berhasil.");
                     showMessage('Login berhasil! Selamat datang kembali.');
                 } catch (error) {
-                    console.error("Error during login:", error);
+                    console.error("Auth: Error saat login:", error);
                     let errorMessage = "Gagal masuk. ";
                     if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                         errorMessage += "Email atau password salah.";
@@ -664,11 +699,13 @@
 
             // Event Listener untuk Logout
             logoutBtn.addEventListener('click', async () => {
+                console.log("Auth: Mencoba keluar.");
                 try {
                     await signOut(auth);
+                    console.log("Auth: Berhasil keluar.");
                     showMessage('Anda telah keluar.');
                 } catch (error) {
-                    console.error("Error during logout:", error);
+                    console.error("Auth: Error saat keluar:", error);
                     showMessage(`Gagal keluar: ${error.message}`);
                 }
             });
@@ -680,16 +717,20 @@
                 const kerangka = kerangkaMakalahTextarea.value.trim();
                 const panjang = panjangMakalahSelect.value;
 
+                console.log("Generator: Tombol Buat Makalah diklik.");
                 if (!judul) {
                     showMessage('Harap masukkan judul makalah.');
+                    console.warn("Generator: Judul makalah kosong.");
                     return;
                 }
 
                 // Cek apakah pengguna sudah login sebelum membuat makalah
                 if (!userId) {
                     showMessage('Anda harus masuk untuk membuat makalah.');
+                    console.warn("Generator: Pengguna belum masuk, tidak bisa membuat makalah.");
                     return;
                 }
+                console.log("Generator: Pengguna terautentikasi (UID:", userId, "). Melanjutkan pembuatan makalah.");
 
                 loadingIndicator.classList.add('active');
                 generateBtn.disabled = true;
@@ -728,6 +769,8 @@
                     prompt += `\n\n**KERANGKA MAKALAH:**\n`; // Marker untuk kerangka
                     prompt += `\n**ISI MAKALAH:**\n`; // Marker untuk isi
 
+                    console.log("Generator: Prompt yang dikirim ke Gemini:", prompt);
+
                     // Panggil Gemini API
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: prompt }] });
@@ -735,11 +778,10 @@
                     // PENTING: GANTI INI DENGAN KUNCI API GOOGLE CLOUD ANDA SENDIRI!
                     // Kunci API ini harus memiliki akses ke Generative Language API.
                     // Contoh: const apiKey = "AIzaSyB-IniAdalahKunciAPIAndaYangValid";
-                    const apiKey = "AIzaSyAGPK4bhFmvUNs7ZauZOtJtESevSzhbUhw"; 
-                    // Jika Anda menjalankan ini di lingkungan Canvas, biarkan kosong.
-                    // Jika Anda menjalankan di GitHub Pages atau server Anda sendiri, Anda HARUS mengisi ini.
+                    const apiKey = "AIzaSyAGPK4bhFmvUNs7ZauZOtJtESevSzhbUhw"; // <<< PASTIKAN INI DIISI DENGAN KUNCI API GEMINI ANDA JIKA DI GITHUB PAGES
 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    console.log("Generator: Memanggil Gemini API di URL:", apiUrl);
 
                     const response = await fetch(apiUrl, {
                         method: 'POST',
@@ -750,20 +792,22 @@
                     // Tambahkan penanganan kesalahan untuk respons HTTP
                     if (!response.ok) {
                         const errorBody = await response.text();
-                        // Lebih spesifik untuk kesalahan 401/403
+                        console.error("Generator: Kesalahan respons HTTP dari Gemini API. Status:", response.status, "Body:", errorBody);
                         if (response.status === 401 || response.status === 403) {
-                            throw new Error(`Kesalahan Otorisasi API (Status: ${response.status}). Pastikan API Key Anda valid dan memiliki izin yang benar. Respons: ${errorBody}`);
+                            throw new Error(`Kesalahan Otorisasi API Gemini (Status: ${response.status}). Pastikan Kunci API Gemini Anda valid dan memiliki izin yang benar. Respons: ${errorBody}`);
                         } else {
-                            throw new Error(`Kesalahan HTTP! Status: ${response.status}, Respons: ${errorBody}`);
+                            throw new Error(`Kesalahan HTTP dari Gemini API! Status: ${response.status}, Respons: ${errorBody}`);
                         }
                     }
 
                     const result = await response.json();
+                    console.log("Generator: Respons Gemini API:", result);
 
                     if (result.candidates && result.candidates.length > 0 &&
                         result.candidates[0].content && result.candidates[0].content.parts &&
                         result.candidates[0].content.parts.length > 0) {
                         const rawText = result.candidates[0].content.parts[0].text;
+                        console.log("Generator: Teks mentah dari Gemini:", rawText);
                         
                         // Pisahkan kerangka, isi makalah, catatan kaki, dan daftar pustaka
                         const outlineMarker = "**KERANGKA MAKALAH:**";
@@ -867,20 +911,23 @@
 
                         makalahContentDiv.innerHTML = formattedMakalah;
                         resultArea.classList.remove('hidden'); // Tampilkan area hasil
+                        console.log("Generator: Makalah berhasil ditampilkan.");
                     } else {
                         showMessage('Gagal menghasilkan makalah. Coba lagi. Respons API tidak terduga.');
-                        console.error('Unexpected API response structure:', result);
+                        console.error('Generator: Struktur respons API tidak terduga:', result);
                     }
                 } catch (error) {
                     showMessage(`Terjadi kesalahan: ${error.message}. Silakan periksa konsol untuk detail.`);
-                    console.error('Error generating makalah content:', error);
+                    console.error('Generator: Error saat membuat makalah:', error);
                 } finally {
                     loadingIndicator.classList.remove('active');
                     generateBtn.disabled = false;
+                    console.log("Generator: Proses pembuatan makalah selesai.");
                 }
             });
 
             copyContentBtn.addEventListener('click', () => {
+                console.log("Copy: Tombol Salin Konten diklik.");
                 let fullTextToCopy = '';
 
                 // 1. Salin Kerangka Makalah yang Dihasilkan (jika terlihat)
@@ -927,6 +974,7 @@
                         fullTextToCopy += '\n';
                     }
                 });
+                console.log("Copy: Teks yang akan disalin:", fullTextToCopy);
 
                 // Gunakan textarea sementara untuk menyalin teks yang sudah diformat
                 const tempTextArea = document.createElement('textarea');
@@ -939,14 +987,17 @@
                     const successful = document.execCommand('copy');
                     if (successful) {
                         showMessage('Konten makalah (kerangka & isi) berhasil disalin!');
+                        console.log("Copy: Konten berhasil disalin.");
                     } else {
                         showMessage('Gagal menyalin konten. Silakan salin secara manual.');
+                        console.warn("Copy: Gagal menyalin konten menggunakan execCommand.");
                     }
                 } catch (err) {
                     showMessage('Gagal menyalin konten. Silakan salin secara manual.');
-                    console.error('Error copying text:', err);
+                    console.error('Copy: Error saat menyalin teks:', err);
                 } finally {
                     document.body.removeChild(tempTextArea);
+                    console.log("Copy: Textarea sementara dihapus.");
                 }
             });
         });
