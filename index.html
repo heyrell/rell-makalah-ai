@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rell Makalah AI - Generator Makalah Otomatis Online Gratis</title>
-    <meta name="google-site-verification" content="hc7xIt5KLo-DjPjK1E7aFJjOxEsPrnBbSU9hIByzmZc" /><!-- Deskripsi meta untuk SEO -->
+    <meta name="google-site-verification" content="hc7xIt5KLo-DjPjK1E7aFJjOxEsPrnBbSU9hIByzmZc" />
+<!-- Deskripsi meta untuk SEO -->
     <meta name="description" content="Rell Makalah AI adalah generator makalah otomatis yang membantu Anda menyusun draf makalah dengan cepat berdasarkan judul dan kerangka.">
     
     <!-- Ikon Website (Favicon) -->
@@ -12,10 +13,12 @@
     <!-- Kata 'Rell' juga terintegrasi secara halus dan sedikit lebih kecil di dalam desain ikon. -->
     <!-- Palet warna deep blues, purples, dan cyan/green accents cocok untuk latar belakang gelap. -->
     <!-- Desainnya minimalis, futuristik, bersih, modern, dan mudah dikenali pada ukuran kecil. -->
+    <!-- Diperbarui untuk menggunakan file dari paket generator favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="shortcut icon" href="/favicon.ico"> <!-- Penting untuk kompatibilitas lama -->
     
     <!-- Google Fonts untuk tampilan futuristik -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -567,29 +570,33 @@
             } catch (e) {
                 console.error("Firebase Init: Error parsing __firebase_config:", e);
                 console.log("Firebase Init: Failed to parse Canvas configuration, using hardcoded configuration.");
-                firebaseConfig = {
-                    apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914", // REPLACE WITH YOUR FIREBASE API KEY FROM FIREBASE CONSOLE
-                    authDomain: "rell-makalah-ai-project-89a29.firebaseapp.com", // REPLACE WITH YOUR AUTH DOMAIN
-                    projectId: "rell-makalah-ai-project-89a29", // REPLACE WITH YOUR PROJECT ID
-                    storageBucket: "rell-makalah-ai-project-89a29.firebasestorage.app",
-                    messagingSenderId: "862112040534",
-                    appId: "1:862112040534:web:6bec7aea2c7ec63f3d5df7",
-                    measurementId: "G-SJK5Q727K4"
-                };
+                // PASTIKAN OBJEK firebaseConfig YANG ANDA SALIN DITEMPEL DI SINI
+                // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+ firebaseConfig = {
+  apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914",
+  authDomain: "rell-makalah-ai-project-89a29.firebaseapp.com",
+  projectId: "rell-makalah-ai-project-89a29",
+  storageBucket: "rell-makalah-ai-project-89a29.firebasestorage.app",
+  messagingSenderId: "862112040534",
+  appId: "1:862112040534:web:6bec7aea2c7ec63f3d5df7",
+  measurementId: "G-SJK5Q727K4"
+};
             }
         } else {
             // Use hardcoded configuration if __firebase_config is not defined (e.g., on GitHub Pages)
             console.log("Firebase Init: __firebase_config not found, using hardcoded configuration.");
-            firebaseConfig = {
-                apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914", // REPLACE WITH YOUR FIREBASE API KEY FROM FIREBASE CONSOLE
-                authDomain: "rell-makalah-ai-project-89a29.firebaseapp.com", // REPLACE WITH YOUR AUTH DOMAIN
-                projectId: "rell-makalah-ai-project-89a29", // REPLACE WITH YOUR PROJECT ID
-                storageBucket: "rell-makalah-ai-project-89a29.firebasestorage.app",
-                messagingSenderId: "862112040534",
-                appId: "1:862112040534:web:6bec7aea2c7ec63f3d5df7",
-                    measurementId: "G-SJK5Q727K4"
-                };
-            }
+            // PASTIKAN OBJEK firebaseConfig YANG SAMA DITEMPEL DI SINI JUGA
+            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+ firebaseConfig = {
+  apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914",
+  authDomain: "rell-makalah-ai-project-89a29.firebaseapp.com",
+  projectId: "rell-makalah-ai-project-89a29",
+  storageBucket: "rell-makalah-ai-project-89a29.firebasestorage.app",
+  messagingSenderId: "862112040534",
+  appId: "1:862112040534:web:6bec7aea2c7ec63f3d5df7",
+  measurementId: "G-SJK5Q727K4"
+};
+        }
 
         // Function to display a temporary message
         function showMessage(message, duration = 2000) {
@@ -944,7 +951,7 @@
                 // Determine the final requested word count
                 if (panjang === 'custom_premium') {
                     const customValue = parseInt(customWordCountInput.value, 10);
-                    if (isNaN(customValue) || customValue < 5000 || customValue > 12000) {
+                    if (isNaN(customValue) || customValue < 5000 || customValue < 5000 || customValue > 12000) {
                         showMessage('For custom length, please enter a number between 5000 and 12000.');
                         console.warn("Generator: Invalid custom word count input.");
                         return;
@@ -1000,7 +1007,7 @@
                     // IMPORTANT: REPLACE THIS WITH YOUR OWN GOOGLE CLOUD API KEY!
                     // This API key must have access to the Generative Language API.
                     // Example: const apiKey = "AIzaSyB-YourValidAPIKeyHere";
-                    const apiKey = "AIzaSyAGPK4bhFmvUNs7ZauZOtJtESevSzhbUhw"; // <<< MAKE SURE THIS IS FILLED WITH YOUR GEMINI API KEY IF ON GITHUB PAGES
+                    const apiKey = "AIzaSyAGPK4bhFmvUNs7ZauZOtJtESevSzhbUhw"; // <<< PASTIKAN INI DIISI DENGAN API KEY GEMINI ANDA
 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     console.log("Generator: Calling Gemini API at URL:", apiUrl);
