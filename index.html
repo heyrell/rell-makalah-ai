@@ -8,17 +8,12 @@
 <!-- Deskripsi meta untuk SEO -->
     <meta name="description" content="Rell Makalah AI adalah generator makalah otomatis yang membantu Anda menyusun draf makalah dengan cepat berdasarkan judul dan kerangka.">
     
-    <!-- Ikon Website (Favicon) -->
-    <!-- Ikon ini menggabungkan elemen AI (sirkuit/glowing) yang terintegrasi langsung dengan simbol dokumen. -->
-    <!-- Kata 'Rell' juga terintegrasi secara halus dan sedikit lebih kecil di dalam desain ikon. -->
-    <!-- Palet warna deep blues, purples, dan cyan/green accents cocok untuk latar belakang gelap. -->
-    <!-- Desainnya minimalis, futuristik, bersih, modern, dan mudah dikenali pada ukuran kecil. -->
-    <!-- Diperbarui untuk menggunakan file dari paket generator favicon -->
+    <!-- Ikon Website (Favicon) - Pastikan semua file ini ada di direktori root GitHub Anda -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="shortcut icon" href="/favicon.ico"> <!-- Penting untuk kompatibilitas lama -->
+    <link rel="shortcut icon" href="/favicon.ico"> 
     
     <!-- Google Fonts untuk tampilan futuristik -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -570,9 +565,8 @@
             } catch (e) {
                 console.error("Firebase Init: Error parsing __firebase_config:", e);
                 console.log("Firebase Init: Failed to parse Canvas configuration, using hardcoded configuration.");
-                // PASTIKAN OBJEK firebaseConfig YANG ANDA SALIN DITEMPEL DI SINI
-                firebaseConfig = {
-                    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+                // GANTI DENGAN KONFIGURASI FIREBASE ANDA YANG SEBENARNYA DARI KONSOL FIREBASE
+                firebaseConfig = {// For Firebase JS SDK v7.20.0 and later, measurementId is optional
  firebaseConfig = {
   apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914",
   authDomain: "rell-makalah-ai-project-89a29.firebaseapp.com",
@@ -582,14 +576,12 @@
   appId: "1:862112040534:web:6bec7aea2c7ec63f3d5df7",
   measurementId: "G-SJK5Q727K4"
 };
-                };
             }
         } else {
-            // Use hardcoded configuration if __firebase_config is not defined (e.g., on GitHub Pages)
+            // Gunakan konfigurasi hardcoded jika __firebase_config tidak didefinisikan (misalnya, di GitHub Pages)
             console.log("Firebase Init: __firebase_config not found, using hardcoded configuration.");
-            // PASTIKAN OBJEK firebaseConfig YANG SAMA DITEMPEL DI SINI JUGA
-            firebaseConfig = {
-                // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            // GANTI DENGAN KONFIGURASI FIREBASE ANDA YANG SAMA DARI KONSOL FIREBASE
+            firebaseConfig = {// For Firebase JS SDK v7.20.0 and later, measurementId is optional
  firebaseConfig = {
   apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914",
   authDomain: "rell-makalah-ai-project-89a29.firebaseapp.com",
@@ -599,10 +591,9 @@
   appId: "1:862112040534:web:6bec7aea2c7ec63f3d5df7",
   measurementId: "G-SJK5Q727K4"
 };
-            };
         }
 
-        // Function to display a temporary message
+        // Fungsi untuk menampilkan pesan sementara
         function showMessage(message, duration = 2000) {
             const messageBox = document.getElementById('messageBox');
             messageBox.textContent = message;
@@ -612,17 +603,17 @@
             }, duration);
         }
 
-        // Function to update the premium UI status
-        function updatePremiumUI(currentUser) { // Accepts the user object as a parameter
+        // Fungsi untuk memperbarui status UI premium
+        function updatePremiumUI(currentUser) { // Menerima objek pengguna sebagai parameter
             const panjangMakalahSelect = document.getElementById('panjangMakalah');
             const customWordCountContainer = document.getElementById('customWordCountContainer');
             const customWordCountInput = document.getElementById('customWordCountInput');
             const upgradePremiumBtn = document.getElementById('upgradePremiumBtn');
             const authStatus = document.getElementById('authStatus');
 
-            // Options that are always free
+            // Opsi yang selalu gratis
             const freeOptions = ['pendek', 'sedang', 'panjang', '4000_kata', '4250_kata'];
-            // Options that are premium
+            // Opsi yang premium
             const premiumOptionsValues = ['5000_kata', 'custom_premium'];
 
             panjangMakalahSelect.querySelectorAll('option').forEach(option => {
@@ -642,30 +633,30 @@
                 }
             });
 
-            // Set visibility of the upgrade button
-            // Show upgrade button only if logged in (not anonymous) and not premium
+            // Atur visibilitas tombol upgrade
+            // Tampilkan tombol upgrade hanya jika masuk (bukan anonim) dan bukan premium
             if (currentUser && currentUser.email && !isUserPremium) {
                 upgradePremiumBtn.classList.remove('hidden');
             } else {
                 upgradePremiumBtn.classList.add('hidden');
             }
 
-            // Set visibility and status of the custom input
+            // Atur visibilitas dan status input kustom
             if (panjangMakalahSelect.value === 'custom_premium' && isUserPremium) {
                 customWordCountContainer.style.display = 'block';
                 customWordCountInput.disabled = false;
             } else {
                 customWordCountContainer.style.display = 'none';
                 customWordCountInput.disabled = true;
-                customWordCountInput.value = ''; // Clear value when hidden
+                customWordCountInput.value = ''; // Hapus nilai saat disembunyikan
             }
 
-            // Update authentication status text
-            if (currentUser && currentUser.email) { // If user logs in with email
+            // Perbarui teks status autentikasi
+            if (currentUser && currentUser.email) { // Jika pengguna masuk dengan email
                 authStatus.textContent = `Masuk sebagai: ${currentUser.email}`;
-            } else if (currentUser) { // If user logs in anonymously
+            } else if (currentUser) { // Jika pengguna masuk secara anonim
                 authStatus.textContent = `Masuk sebagai: Pengguna Anonim`;
-            } else { // If not logged in
+            } else { // Jika belum masuk
                 authStatus.textContent = `Anda belum masuk.`;
             }
 
@@ -693,7 +684,7 @@
             const makalahContentDiv = document.getElementById('makalahContent');
             const copyContentBtn = document.getElementById('copyContentBtn');
 
-            // Authentication Elements
+            // Elemen Autentikasi
             const authSection = document.getElementById('authSection');
             const authTitle = document.getElementById('authTitle');
             const authStatus = document.getElementById('authStatus');
@@ -702,42 +693,42 @@
             const loginBtn = document.getElementById('loginBtn');
             const registerBtn = document.getElementById('registerBtn');
             const logoutBtn = document.getElementById('logoutBtn');
-            const upgradePremiumBtn = document.getElementById('upgradePremiumBtn'); // Upgrade button
+            const upgradePremiumBtn = document.getElementById('upgradePremiumBtn'); // Tombol Upgrade
 
-            // Firebase Initialization
+            // Inisialisasi Firebase
             try {
-                console.log("Firebase: Starting Firebase initialization with config:", firebaseConfig);
+                console.log("Firebase: Memulai inisialisasi Firebase dengan konfigurasi:", firebaseConfig);
                 app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
                 analytics = getAnalytics(app);
-                console.log("Firebase: Firebase initialization successful.");
+                console.log("Firebase: Inisialisasi Firebase berhasil.");
 
-                console.log("Firebase Auth: Checking initial authentication token...");
+                console.log("Firebase Auth: Memeriksa token autentikasi awal...");
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     try {
-                        console.log("Firebase Auth: Attempting to sign in with custom token.");
+                        console.log("Firebase Auth: Mencoba masuk dengan token kustom.");
                         await signInWithCustomToken(auth, __initial_auth_token);
-                        console.log("Firebase Auth: Successfully signed in with custom token.");
+                        console.log("Firebase Auth: Berhasil masuk dengan token kustom.");
                     } catch (tokenError) {
-                        console.error("Firebase Auth: Failed to sign in with custom token. Attempting anonymous. Error:", tokenError);
+                        console.error("Firebase Auth: Gagal masuk dengan token kustom. Mencoba anonim. Error:", tokenError);
                         await signInAnonymously(auth);
-                        console.log("Firebase Auth: Successfully signed in anonymously after custom token failure.");
+                        console.log("Firebase Auth: Berhasil masuk secara anonim setelah kegagalan token kustom.");
                     }
                 } else {
-                    console.log("Firebase Auth: Custom token not found, attempting anonymous sign-in.");
+                    console.log("Firebase Auth: Token kustom tidak ditemukan, mencoba masuk secara anonim.");
                     await signInAnonymously(auth);
-                    console.log("Firebase Auth: Successfully signed in anonymously.");
+                    console.log("Firebase Auth: Berhasil masuk secara anonim.");
                 }
 
             } catch (error) {
-                console.error("Firebase: Error during initialization or sign-in:", error);
-                showMessage(`Failed to initialize Firebase: ${error.message}. Account features might not work.`);
+                console.error("Firebase: Error selama inisialisasi atau masuk:", error);
+                showMessage(`Gagal menginisialisasi Firebase: ${error.message}. Fitur akun mungkin tidak berfungsi.`);
             }
 
-            // Authentication state change listener
+            // Listener perubahan status autentikasi
             onAuthStateChanged(auth, async (user) => {
-                console.log("Firebase Auth State Changed. User:", user ? user.uid : "null");
+                console.log("Firebase Auth State Changed. Pengguna:", user ? user.uid : "null");
                 if (user) {
                     userId = user.uid;
                     authStatus.classList.remove('logged-out');
@@ -751,39 +742,39 @@
                     passwordInput.disabled = true;
                     authTitle.textContent = "Status Akun";
 
-                    // Save basic user data to Firestore if it doesn't exist
-                    // Ensure `db` and `appId` are initialized before calling Firestore
+                    // Simpan data pengguna dasar ke Firestore jika belum ada
+                    // Pastikan `db` dan `appId` diinisialisasi sebelum memanggil Firestore
                     if (db && appId) {
                         const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/profile/data`);
-                        console.log("Firestore: Attempting to get user profile document for UID:", userId);
+                        console.log("Firestore: Mencoba mendapatkan dokumen profil pengguna untuk UID:", userId);
                         try {
                             const userDocSnap = await getDoc(userDocRef);
                             if (!userDocSnap.exists()) {
-                                console.log("Firestore: User profile not found, creating a new one.");
+                                console.log("Firestore: Profil pengguna tidak ditemukan, membuat yang baru.");
                                 await setDoc(userDocRef, {
                                     email: user.email || null,
                                     createdAt: new Date(),
                                     isPremium: false // Default non-premium
                                 });
-                                console.log("Firestore: User profile successfully created.");
-                                isUserPremium = false; // Set premium status
+                                console.log("Firestore: Profil pengguna berhasil dibuat.");
+                                isUserPremium = false; // Atur status premium
                             } else {
-                                console.log("Firestore: User profile already exists.");
-                                isUserPremium = userDocSnap.data().isPremium || false; // Get premium status from Firestore
+                                console.log("Firestore: Profil pengguna sudah ada.");
+                                isUserPremium = userDocSnap.data().isPremium || false; // Dapatkan status premium dari Firestore
                             }
                         } catch (firestoreError) {
-                            console.error("Firestore: Error accessing or creating user profile:", firestoreError);
+                            console.error("Firestore: Error mengakses atau membuat profil pengguna:", firestoreError);
                             showMessage(`Firestore Error: ${firestoreError.message}.`);
-                            isUserPremium = false; // Default to non-premium if there's an error
+                            isUserPremium = false; // Default ke non-premium jika ada error
                         }
                     } else {
-                        console.warn("Firestore: Database or App ID not initialized. Cannot save user profile.");
-                        isUserPremium = false; // Default to non-premium
+                        console.warn("Firestore: Database atau App ID tidak diinisialisasi. Tidak dapat menyimpan profil pengguna.");
+                        isUserPremium = false; // Default ke non-premium
                     }
-                    updatePremiumUI(user); // Update UI after getting premium status, passing user object
+                    updatePremiumUI(user); // Perbarui UI setelah mendapatkan status premium, meneruskan objek pengguna
                 } else {
                     userId = null;
-                    isUserPremium = false; // Reset premium status on logout
+                    isUserPremium = false; // Reset status premium saat logout
                     authStatus.classList.remove('logged-in');
                     authStatus.classList.add('logged-out');
                     loginBtn.classList.remove('hidden');
@@ -794,49 +785,49 @@
                     passwordInput.value = '';
                     passwordInput.disabled = false;
                     authTitle.textContent = "Masuk / Daftar";
-                    updatePremiumUI(null); // Update UI on logout, passing null for user
+                    updatePremiumUI(null); // Perbarui UI saat logout, meneruskan null untuk pengguna
                 }
             });
 
-            // Event Listener for Register
+            // Event Listener untuk Daftar
             registerBtn.addEventListener('click', async () => {
                 const email = emailInput.value;
                 const password = passwordInput.value;
 
-                console.log("Auth: Attempting to register with email:", email);
+                console.log("Auth: Mencoba mendaftar dengan email:", email);
                 if (!email || !password) {
-                    showMessage('Email and password must be filled.');
-                    console.warn("Auth: Empty email or password during registration.");
+                    showMessage('Email dan kata sandi harus diisi.');
+                    console.warn("Auth: Email atau kata sandi kosong saat pendaftaran.");
                     return;
                 }
                 if (password.length < 6) {
-                    showMessage('Password must be at least 6 characters long.');
-                    console.warn("Auth: Password too short during registration.");
+                    showMessage('Kata sandi minimal 6 karakter.');
+                    console.warn("Auth: Kata sandi terlalu pendek saat pendaftaran.");
                     return;
                 }
 
                 try {
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     const user = userCredential.user;
-                    console.log("Auth: Registration successful for user:", user.uid);
-                    // Save basic user data to Firestore upon successful registration
+                    console.log("Auth: Pendaftaran berhasil untuk pengguna:", user.uid);
+                    // Simpan data pengguna dasar ke Firestore setelah pendaftaran berhasil
                     const userDocRef = doc(db, `artifacts/${appId}/users/${user.uid}/profile/data`);
                     await setDoc(userDocRef, {
                         email: user.email,
                         createdAt: new Date(),
                         isPremium: false
                     });
-                    console.log("Firestore: User profile created after registration.");
-                    showMessage('Registration successful! You are now logged in.');
+                    console.log("Firestore: Profil pengguna dibuat setelah pendaftaran.");
+                    showMessage('Pendaftaran berhasil! Anda sekarang masuk.');
                 } catch (error) {
-                    console.error("Auth: Error during registration:", error);
-                    let errorMessage = "Failed to register. ";
+                    console.error("Auth: Error selama pendaftaran:", error);
+                    let errorMessage = "Gagal mendaftar. ";
                     if (error.code === 'auth/email-already-in-use') {
-                        errorMessage += "Email is already registered.";
+                        errorMessage += "Email sudah terdaftar.";
                     } else if (error.code === 'auth/invalid-email') {
-                        errorMessage += "Invalid email format.";
+                        errorMessage += "Format email tidak valid.";
                     } else if (error.code === 'auth/weak-password') {
-                        errorMessage += "Password is too weak.";
+                        errorMessage += "Kata sandi terlalu lemah.";
                     } else {
                         errorMessage += error.message;
                     }
@@ -844,29 +835,29 @@
                 }
             });
 
-            // Event Listener for Login
+            // Event Listener untuk Masuk
             loginBtn.addEventListener('click', async () => {
                 const email = emailInput.value;
                 const password = passwordInput.value;
 
-                console.log("Auth: Attempting to log in with email:", email);
+                console.log("Auth: Mencoba masuk dengan email:", email);
                 if (!email || !password) {
-                    showMessage('Email and password must be filled.');
-                    console.warn("Auth: Empty email or password during login.");
+                    showMessage('Email dan kata sandi harus diisi.');
+                    console.warn("Auth: Email atau kata sandi kosong saat masuk.");
                     return;
                 }
 
                 try {
                     await signInWithEmailAndPassword(auth, email, password);
-                    console.log("Auth: Login successful.");
-                    showMessage('Login successful! Welcome back.');
+                    console.log("Auth: Masuk berhasil.");
+                    showMessage('Masuk berhasil! Selamat datang kembali.');
                 } catch (error) {
-                    console.error("Auth: Error during login:", error);
-                    let errorMessage = "Failed to log in. ";
+                    console.error("Auth: Error selama masuk:", error);
+                    let errorMessage = "Gagal masuk. ";
                     if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                        errorMessage += "Incorrect email or password.";
+                        errorMessage += "Email atau kata sandi salah.";
                     } else if (error.code === 'auth/invalid-email') {
-                        errorMessage += "Invalid email format.";
+                        errorMessage += "Format email tidak valid.";
                     } else {
                         errorMessage += error.message;
                     }
@@ -874,90 +865,90 @@
                 }
             });
 
-            // Event Listener for Logout
+            // Event Listener untuk Keluar
             logoutBtn.addEventListener('click', async () => {
-                console.log("Auth: Attempting to log out.");
+                console.log("Auth: Mencoba keluar.");
                 try {
                     await signOut(auth);
-                    console.log("Auth: Successfully logged out.");
-                    showMessage('You have been logged out.');
+                    console.log("Auth: Berhasil keluar.");
+                    showMessage('Anda telah keluar.');
                 }
                 catch (error) {
-                    console.error("Auth: Error during logout:", error);
-                    showMessage(`Failed to log out: ${error.message}`);
+                    console.error("Auth: Error selama keluar:", error);
+                    showMessage(`Gagal keluar: ${error.message}`);
                 }
             });
 
-            // Event Listener for Upgrade to Premium
+            // Event Listener untuk Upgrade ke Premium
             upgradePremiumBtn.addEventListener('click', async () => {
                 if (!userId) {
-                    showMessage('You must be logged in to upgrade to Premium.');
+                    showMessage('Anda harus masuk untuk mengupgrade ke Premium.');
                     return;
                 }
                 if (isUserPremium) {
-                    showMessage('You are already a Premium member!');
+                    showMessage('Anda sudah menjadi anggota Premium!');
                     return;
                 }
 
-                console.log("Premium: Attempting to upgrade user to Premium for UID:", userId);
+                console.log("Premium: Mencoba mengupgrade pengguna ke Premium untuk UID:", userId);
                 try {
                     const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/profile/data`);
                     await updateDoc(userDocRef, {
                         isPremium: true,
                         premiumActivatedAt: new Date()
                     });
-                    isUserPremium = true; // Update local premium status
-                    updatePremiumUI(auth.currentUser); // Update UI, passing auth.currentUser
-                    showMessage('Congratulations! Your account is now Premium!');
-                    console.log("Premium: User successfully upgraded to Premium.");
+                    isUserPremium = true; // Perbarui status premium lokal
+                    updatePremiumUI(auth.currentUser); // Perbarui UI, meneruskan auth.currentUser
+                    showMessage('Selamat! Akun Anda sekarang Premium!');
+                    console.log("Premium: Pengguna berhasil diupgrade ke Premium.");
                 } catch (error) {
-                    console.error("Premium: Error upgrading to Premium:", error);
-                    showMessage(`Failed to upgrade to Premium: ${error.message}`);
+                    console.error("Premium: Error mengupgrade ke Premium:", error);
+                    showMessage(`Gagal mengupgrade ke Premium: ${error.message}`);
                 }
             });
 
-            // Event Listener for changes in the paper length dropdown
+            // Event Listener untuk perubahan pada dropdown panjang makalah
             panjangMakalahSelect.addEventListener('change', () => {
-                updatePremiumUI(auth.currentUser); // Update UI when selection changes, passing auth.currentUser
+                updatePremiumUI(auth.currentUser); // Perbarui UI saat pilihan berubah, meneruskan auth.currentUser
             });
 
 
-            // Logic for generating the paper
+            // Logika untuk menghasilkan makalah
             generateBtn.addEventListener('click', async () => {
                 const judul = judulMakalahInput.value.trim();
                 const kerangka = kerangkaMakalahTextarea.value.trim();
                 const panjang = panjangMakalahSelect.value;
-                let finalWordCount = 0; // To store the final requested word count
+                let finalWordCount = 0; // Untuk menyimpan jumlah kata yang diminta
 
-                console.log("Generator: Generate Paper button clicked.");
+                console.log("Generator: Tombol Buat Makalah diklik.");
                 if (!judul) {
-                    showMessage('Please enter a paper title.');
-                    console.warn("Generator: Paper title is empty.");
+                    showMessage('Harap masukkan judul makalah.');
+                    console.warn("Generator: Judul makalah kosong.");
                     return;
                 }
 
-                // Check if user is logged in before generating paper
+                // Periksa apakah pengguna masuk sebelum menghasilkan makalah
                 if (!userId) {
-                    showMessage('You must be logged in to generate a paper.');
-                    console.warn("Generator: User not logged in, cannot generate paper.");
+                    showMessage('Anda harus masuk untuk menghasilkan makalah.');
+                    console.warn("Generator: Pengguna tidak masuk, tidak dapat menghasilkan makalah.");
                     return;
                 }
-                console.log("Generator: User authenticated (UID:", userId, "). Proceeding with paper generation.");
+                console.log("Generator: Pengguna terautentikasi (UID:", userId, "). Melanjutkan dengan pembuatan makalah.");
 
-                // Check premium features based on selected length
+                // Periksa fitur premium berdasarkan panjang yang dipilih
                 const premiumLengths = ['5000_kata', 'custom_premium'];
                 if (premiumLengths.includes(panjang) && !isUserPremium) {
-                    showMessage('This feature is only available for Premium members. Please upgrade your account.');
-                    console.warn("Generator: Non-premium user attempting to access premium feature.");
+                    showMessage('Fitur ini hanya tersedia untuk anggota Premium. Harap upgrade akun Anda.');
+                    console.warn("Generator: Pengguna non-premium mencoba mengakses fitur premium.");
                     return;
                 }
 
-                // Determine the final requested word count
+                // Tentukan jumlah kata yang diminta
                 if (panjang === 'custom_premium') {
                     const customValue = parseInt(customWordCountInput.value, 10);
                     if (isNaN(customValue) || customValue < 5000 || customValue < 5000 || customValue > 12000) {
-                        showMessage('For custom length, please enter a number between 5000 and 12000.');
-                        console.warn("Generator: Invalid custom word count input.");
+                        showMessage('Untuk panjang kustom, harap masukkan angka antara 5000 dan 12000.');
+                        console.warn("Generator: Input jumlah kata kustom tidak valid.");
                         return;
                     }
                     finalWordCount = customValue;
@@ -974,19 +965,19 @@
                 } else if (panjang === '5000_kata') {
                     finalWordCount = 5000;
                 }
-                console.log("Generator: Requested word count:", finalWordCount);
+                console.log("Generator: Jumlah kata yang diminta:", finalWordCount);
 
 
                 loadingIndicator.classList.add('active');
                 generateBtn.disabled = true;
-                resultArea.classList.add('hidden'); // Hide previous result area
-                generatedOutlineContainer.classList.add('hidden'); // Hide previous outline
+                resultArea.classList.add('hidden'); // Sembunyikan area hasil sebelumnya
+                generatedOutlineContainer.classList.add('hidden'); // Sembunyikan kerangka sebelumnya
 
                 try {
                     let prompt = `Buatkan draf makalah akademik berdasarkan informasi berikut:\n\n`;
                     prompt += `Judul: ${judul}\n\n`;
                     
-                    if (kerangka) { // Only add outline if not empty
+                    if (kerangka) { // Hanya tambahkan kerangka jika tidak kosong
                         prompt += `Kerangka yang diberikan: ${kerangka}\n\n`;
                         prompt += `Ulangi kerangka yang diberikan dalam format daftar bernomor atau berpoin sederhana di bagian "**KERANGKA MAKALAH:**", dan kemudian kembangkan isinya di bagian "**ISI MAKALAH:**".\n\n`;
                     } else {
@@ -999,22 +990,21 @@
                     prompt += ` Di bagian akhir makalah, setelah semua bab, sertakan bagian '**CATATAN KAKI:**' yang berisi daftar catatan kaki placeholder dan deskripsi singkatnya (misalnya, '1. Catatan kaki tentang definisi X.').`;
                     prompt += ` Setelah itu, sertakan bagian '**DAFTAR PUSTAKA:**' dengan setidaknya 3-5 entri placeholder yang relevan (misalnya, 'Nama Penulis. (Tahun). Judul Buku/Artikel. Penerbit/Jurnal.').`;
                     prompt += ` **Penting: Jangan sertakan sitasi atau referensi palsu. Jika Anda perlu menyebutkan sumber, gunakan placeholder seperti "[Sumber: Nama Penulis, Tahun]" atau "[Referensi diperlukan]".**`;
-                    prompt += `\n\n**KERANGKA MAKALAH:**\n`; // Marker for outline
-                    prompt += `\n**ISI MAKALAH:**\n`; // Marker for content
+                    prompt += `\n\n**KERANGKA MAKALAH:**\n`; // Penanda untuk kerangka
+                    prompt += `\n**ISI MAKALAH:**\n`; // Penanda untuk konten
 
-                    console.log("Generator: Prompt sent to Gemini:", prompt);
+                    console.log("Generator: Prompt dikirim ke Gemini:", prompt);
 
-                    // Call Gemini API
+                    // Panggil Gemini API
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                     const payload = { contents: chatHistory };
-                    // IMPORTANT: REPLACE THIS WITH YOUR OWN GOOGLE CLOUD API KEY!
-                    // This API key must have access to the Generative Language API.
-                    // Example: const apiKey = "AIzaSyB-YourValidAPIKeyHere";
+                    // PENTING: GANTI INI DENGAN GOOGLE CLOUD API KEY ANDA SENDIRI!
+                    // API key ini harus memiliki akses ke Generative Language API.
                     const apiKey = "AIzaSyAGPK4bhFmvUNs7ZauZOtJtESevSzhbUhw"; // <<< PASTIKAN INI DIISI DENGAN API KEY GEMINI ANDA
 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                    console.log("Generator: Calling Gemini API at URL:", apiUrl);
+                    console.log("Generator: Memanggil Gemini API di URL:", apiUrl);
 
                     const response = await fetch(apiUrl, {
                         method: 'POST',
@@ -1022,27 +1012,27 @@
                         body: JSON.stringify(payload)
                     });
 
-                    // Add error handling for HTTP responses
+                    // Tambahkan penanganan error untuk respons HTTP
                     if (!response.ok) {
                         const errorBody = await response.text();
-                        console.error("Generator: HTTP response error from Gemini API. Status:", response.status, "Body:", errorBody);
+                        console.error("Generator: Error respons HTTP dari Gemini API. Status:", response.status, "Body:", errorBody);
                         if (response.status === 401 || response.status === 403) {
-                            throw new Error(`Gemini API Authorization Error (Status: ${response.status}). Ensure your Gemini API Key is valid and has correct permissions. Response: ${errorBody}`);
+                            throw new Error(`Error Otorisasi API Gemini (Status: ${response.status}). Pastikan Gemini API Key Anda valid dan memiliki izin yang benar. Respons: ${errorBody}`);
                         } else {
-                            throw new Error(`HTTP Error from Gemini API! Status: ${response.status}, Response: ${errorBody}`);
+                            throw new Error(`Error HTTP dari Gemini API! Status: ${response.status}, Respons: ${errorBody}`);
                         }
                     }
 
                     const result = await response.json();
-                    console.log("Generator: Gemini API Response:", result);
+                    console.log("Generator: Respons API Gemini:", result);
 
                     if (result.candidates && result.candidates.length > 0 &&
                         result.candidates[0].content && result.candidates[0].content.parts &&
                         result.candidates[0].content.parts.length > 0) {
                         const rawText = result.candidates[0].content.parts[0].text;
-                        console.log("Generator: Raw text from Gemini:", rawText);
+                        console.log("Generator: Teks mentah dari Gemini:", rawText);
                         
-                        // Separate outline, paper content, footnotes, and bibliography
+                        // Pisahkan kerangka, konten makalah, catatan kaki, dan daftar pustaka
                         const outlineMarker = "**KERANGKA MAKALAH:**";
                         const contentMarker = "**ISI MAKALAH:**";
                         const footnotesMarker = "**CATATAN KAKI:**";
@@ -1053,7 +1043,7 @@
                         let footnotesText = '';
                         let bibliographyText = '';
 
-                        // Split by markers
+                        // Pisahkan berdasarkan penanda
                         const parts = rawText.split(outlineMarker);
                         if (parts.length > 1) {
                             const contentAndBeyond = parts[1].split(contentMarker);
@@ -1070,75 +1060,75 @@
                                 }
                             }
                         } else {
-                            // Fallback if markers are not found, assume entire text is content
+                            // Fallback jika penanda tidak ditemukan, asumsikan seluruh teks adalah konten
                             makalahText = rawText;
-                            outlineText = "Outline could not be automatically extracted. Please refer to the paper content.";
-                            footnotesText = "Footnotes could not be automatically extracted.";
-                            bibliographyText = "Bibliography could not be automatically extracted.";
+                            outlineText = "Kerangka tidak dapat diekstrak secara otomatis. Harap merujuk ke konten makalah.";
+                            footnotesText = "Catatan kaki tidak dapat diekstrak secara otomatis.";
+                            bibliographyText = "Daftar pustaka tidak dapat diekstrak secara otomatis.";
                         }
 
-                        // Format outline
+                        // Format kerangka
                         let formattedOutline = outlineText
-                            .replace(/^\d+\.\s*(.*)$/gm, '<li>$1</li>') // Numbered list items
-                            .replace(/^[a-z]\.\s*(.*)$/gm, '<li>$1</li>') // Lettered list items
-                            .replace(/^\-\s*(.*)$/gm, '<li>$1</li>'); // Bullet list items
+                            .replace(/^\d+\.\s*(.*)$/gm, '<li>$1</li>') // Item daftar bernomor
+                            .replace(/^[a-z]\.\s*(.*)$/gm, '<li>$1</li>') // Item daftar berhuruf
+                            .replace(/^\-\s*(.*)$/gm, '<li>$1</li>'); // Item daftar berpoin
                         
                         if (formattedOutline.includes('<li>')) {
-                            // Crude way to handle nested lists, might need more robust parsing for complex outlines
+                            // Cara kasar untuk menangani daftar bersarang, mungkin membutuhkan parsing yang lebih kuat untuk kerangka kompleks
                             formattedOutline = `<ul>${formattedOutline}</ul>`;
-                            formattedOutline = formattedOutline.replace(/<\/li>\s*<li>/g, '</li><li>'); // Clean up extra spaces
-                            formattedOutline = formattedOutline.replace(/<li>\s*([a-z]\.)/g, '<ul><li>$1'); // Basic nested list for a. b.
-                            formattedOutline = formattedOutline.replace(/(<\/li>)(?!.*<li>)/g, '</li></ul>'); // Close nested lists
+                            formattedOutline = formattedOutline.replace(/<\/li>\s*<li>/g, '</li><li>'); // Bersihkan spasi ekstra
+                            formattedOutline = formattedOutline.replace(/<li>\s*([a-z]\.)/g, '<ul><li>$1'); // Daftar bersarang dasar untuk a. b.
+                            formattedOutline = formattedOutline.replace(/(<\/li>)(?!.*<li>)/g, '</li></ul>'); // Tutup daftar bersarang
                         } else {
-                            formattedOutline = `<p>${outlineText}</p>`; // If no list, display as paragraph
+                            formattedOutline = `<p>${outlineText}</p>`; // Jika tidak ada daftar, tampilkan sebagai paragraf
                         }
 
                         outlineContentDiv.innerHTML = formattedOutline;
                         generatedOutlineContainer.classList.remove('hidden');
 
-                        // --- Start building formatted makalah content with improved structure ---
+                        // --- Mulai membangun konten makalah yang diformat dengan struktur yang lebih baik ---
                         let finalMakalahHtml = '';
                         let tocHtml = '<h2 class="section-heading">Daftar Isi</h2><ul class="list-unstyled">';
 
-                        // Function to generate a unique ID for headings for TOC linking
+                        // Fungsi untuk menghasilkan ID unik untuk judul untuk tautan TOC
                         function generateId(text) {
                             return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-*|-*$/g, '');
                         }
 
                         const makalahLines = makalahText.split('\n');
                         let currentLevel = 0; // 0: root, 1: BAB, 2: A., 3: 1., 4: a.
-                        let tocStack = [tocHtml]; // Stack to manage nested TOC lists
+                        let tocStack = [tocHtml]; // Stack untuk mengelola daftar TOC bersarang
 
                         makalahLines.forEach(line => {
                             line = line.trim();
                             if (!line) {
-                                finalMakalahHtml += `<p class="mb-4"></p>`; // Add empty paragraph for spacing
-                                return; // Skip empty lines
+                                finalMakalahHtml += `<p class="mb-4"></p>`; // Tambahkan paragraf kosong untuk spasi
+                                return; // Lewati baris kosong
                             }
 
-                            // Check for BAB headings (e.g., BAB I: Pendahuluan)
+                            // Periksa judul BAB (misalnya, BAB I: Pendahuluan)
                             if (line.match(/^BAB\s[IVXLCDM]+\s*:/i)) {
                                 const headingId = generateId(line);
                                 finalMakalahHtml += `<h2 class="bab-heading" id="${headingId}">${line}</h2>`;
                                 
-                                // Close previous lists if any
+                                // Tutup daftar sebelumnya jika ada
                                 while (tocStack.length > 1) {
                                     tocHtml += tocStack.pop() + '</ul>';
                                 }
-                                tocHtml += `<li><a href="#${headingId}">${line}</a></li>`; // Removed page numbers placeholder
+                                tocHtml += `<li><a href="#${headingId}">${line}</a></li>`; // Placeholder nomor halaman dihapus
                                 currentLevel = 1;
                             }
-                            // Check for A. B. C. headings
+                            // Periksa judul A. B. C.
                             else if (line.match(/^[A-Z]\.\s/)) {
                                 const headingId = generateId(line);
-                                // Add text-center to these headings
+                                // Tambahkan text-center ke judul-judul ini
                                 finalMakalahHtml += `<h3 class="text-2xl font-semibold mt-6 mb-3 text-center" id="${headingId}">${line}</h3>`;
                                 
-                                // Adjust TOC nesting
-                                if (currentLevel < 2) { // If coming from BAB or root, start new UL
+                                // Sesuaikan nesting TOC
+                                if (currentLevel < 2) { // Jika berasal dari BAB atau root, mulai UL baru
                                     tocHtml += `<ul class="list-unstyled ml-6">`;
-                                    tocStack.push('</ul>'); // Push closing tag
-                                } else if (currentLevel > 2) { // If coming from lower level, close previous ULs
+                                    tocStack.push('</ul>'); // Dorong tag penutup
+                                } else if (currentLevel > 2) { // Jika berasal dari level yang lebih rendah, tutup UL sebelumnya
                                     while (currentLevel > 2 && tocStack.length > 1) {
                                         tocHtml += tocStack.pop() + '</ul>';
                                     }
@@ -1146,13 +1136,13 @@
                                 tocHtml += `<li><a href="#${headingId}">${line}</a></li>`;
                                 currentLevel = 2;
                             }
-                            // Check for 1. 2. 3. headings
+                            // Periksa judul 1. 2. 3.
                             else if (line.match(/^\d+\.\s/)) {
                                 const headingId = generateId(line);
-                                // Add text-center to these headings
+                                // Tambahkan text-center ke judul-judul ini
                                 finalMakalahHtml += `<h4 class="text-xl font-semibold mt-5 mb-2 text-center" id="${headingId}">${line}</h4>`;
 
-                                // Adjust TOC nesting
+                                // Sesuaikan nesting TOC
                                 if (currentLevel < 3) {
                                     tocHtml += `<ul class="list-unstyled ml-12">`;
                                     tocStack.push('</ul>');
@@ -1164,13 +1154,13 @@
                                 tocHtml += `<li><a href="#${headingId}">${line}</a></li>`;
                                 currentLevel = 3;
                             }
-                            // Check for a. b. c. headings
+                            // Periksa judul a. b. c.
                             else if (line.match(/^[a-z]\.\s/)) {
                                 const headingId = generateId(line);
-                                // Add text-center to these headings
+                                // Tambahkan text-center ke judul-judul ini
                                 finalMakalahHtml += `<h5 class="text-lg font-semibold mt-4 mb-1 text-center" id="${headingId}">${line}</h5>`;
 
-                                // Adjust TOC nesting
+                                // Sesuaikan nesting TOC
                                 if (currentLevel < 4) {
                                     tocHtml += `<ul class="list-unstyled ml-16">`;
                                     tocStack.push('</ul>');
@@ -1182,32 +1172,32 @@
                                 tocHtml += `<li><a href="#${headingId}">${line}</a></li>`;
                                 currentLevel = 4;
                             }
-                            // Handle regular paragraphs and footnotes
+                            // Tangani paragraf biasa dan catatan kaki
                             else {
-                                // Replace footnote placeholders with superscript links
+                                // Ganti placeholder catatan kaki dengan tautan superskrip
                                 let paragraph = line.replace(/\[(\d+)\]/g, (match, p1) => {
                                     const footnoteId = `footnote-${p1}`;
                                     return `<sup class="footnote-ref"><a href="#${footnoteId}">[${p1}]</a></sup>`;
                                 });
-                                finalMakalahHtml += `<p class="mb-4">${paragraph}</p>`; // Paragraphs are left-aligned by default CSS
+                                finalMakalahHtml += `<p class="mb-4">${paragraph}</p>`; // Paragraf rata kiri oleh CSS default
                             }
                         });
 
-                        // Close any remaining open TOC lists
-                        while (tocStack.length > 0) { // Changed condition to close all
+                        // Tutup daftar TOC yang tersisa
+                        while (tocStack.length > 0) { // Kondisi diubah untuk menutup semua
                             tocHtml += tocStack.pop();
                         }
                         
-                        // Set Daftar Isi
+                        // Atur Daftar Isi
                         makalahContentDiv.innerHTML = tocHtml;
                         
-                        // Append main content
+                        // Tambahkan konten utama
                         makalahContentDiv.innerHTML += finalMakalahHtml;
 
-                        // Add Catatan Kaki
+                        // Tambahkan Catatan Kaki
                         if (footnotesText) {
                             makalahContentDiv.innerHTML += `<h2 class="section-heading">Catatan Kaki</h2>`;
-                            makalahContentDiv.innerHTML += `<ul class="list-unstyled">`; /* Removed text-gray-700 */
+                            makalahContentDiv.innerHTML += `<ul class="list-unstyled">`; /* Dihapus text-gray-700 */
                             footnotesText.split('\n').forEach(line => {
                                 if (line.trim()) {
                                     const match = line.trim().match(/^(\d+)\.\s*(.*)/);
@@ -1223,10 +1213,10 @@
                             makalahContentDiv.innerHTML += `</ul>`;
                         }
 
-                        // Add Daftar Pustaka
+                        // Tambahkan Daftar Pustaka
                         if (bibliographyText) {
                             makalahContentDiv.innerHTML += `<h2 class="section-heading">Daftar Pustaka</h2>`;
-                            makalahContentDiv.innerHTML += `<ul class="list-unstyled">`; /* Removed text-gray-700 */
+                            makalahContentDiv.innerHTML += `<ul class="list-unstyled">`; /* Dihapus text-gray-700 */
                             bibliographyText.split('\n').forEach(line => {
                                 if (line.trim()) {
                                     makalahContentDiv.innerHTML += `<li>${line.trim()}</li>`;
@@ -1236,29 +1226,29 @@
                         }
 
 
-                        resultArea.classList.remove('hidden'); // Show result area
-                        console.log("Generator: Paper successfully displayed.");
+                        resultArea.classList.remove('hidden'); // Tampilkan area hasil
+                        console.log("Generator: Makalah berhasil ditampilkan.");
                     } else {
-                        showMessage('Failed to generate paper. Please try again. Unexpected API response.');
-                        console.error('Generator: Unexpected API response structure:', result);
+                        showMessage('Gagal menghasilkan makalah. Harap coba lagi. Respons API tidak terduga.');
+                        console.error('Generator: Struktur respons API tidak terduga:', result);
                     }
                 } catch (error) {
-                    showMessage(`An error occurred: ${error.message}. Please check the console for details.`);
-                    console.error('Generator: Error generating paper content:', error);
+                    showMessage(`Terjadi kesalahan: ${error.message}. Harap periksa konsol untuk detail.`);
+                    console.error('Generator: Error menghasilkan konten makalah:', error);
                 } finally {
                     loadingIndicator.classList.remove('active');
                     generateBtn.disabled = false;
-                    console.log("Generator: Paper generation process completed.");
+                    console.log("Generator: Proses pembuatan makalah selesai.");
                 }
             });
 
             copyContentBtn.addEventListener('click', () => {
-                console.log("Copy: Copy Content button clicked.");
+                console.log("Copy: Tombol Salin Konten diklik.");
                 let fullTextToCopy = '';
 
-                // 1. Copy Generated Outline (if visible)
+                // 1. Salin Kerangka yang Dihasilkan (jika terlihat)
                 if (!generatedOutlineContainer.classList.contains('hidden')) {
-                    fullTextToCopy += 'GENERATED OUTLINE:\n\n';
+                    fullTextToCopy += 'KERANGKA YANG DIHASILKAN:\n\n';
                     const outlineElements = outlineContentDiv.querySelectorAll('ul, li, p');
                     outlineElements.forEach(el => {
                         if (el.tagName === 'LI') {
@@ -1271,10 +1261,10 @@
                                 } else if (listStyle === 'lower-alpha') {
                                     prefix = `${String.fromCharCode(97 + Array.from(parentUl.children).indexOf(el))}. `;
                                 } else {
-                                    prefix = '- '; // Default for disc, square, etc.
+                                    prefix = '- '; // Default untuk disc, square, dll.
                                 }
                             } else {
-                                prefix = '- '; // Fallback if not in a list
+                                prefix = '- '; // Fallback jika tidak dalam daftar
                             }
                             fullTextToCopy += `${prefix}${el.textContent.trim()}\n`;
                         } else if (el.tagName === 'P') {
@@ -1284,8 +1274,8 @@
                     fullTextToCopy += '\n';
                 }
 
-                // 2. Copy Main Paper Content (including Table of Contents, Chapters, sub-headings, paragraphs, lists, footnotes, bibliography)
-                // Reconstruct from makalahContentDiv's innerHTML based on new structure
+                // 2. Salin Konten Makalah Utama (termasuk Daftar Isi, Bab, sub-judul, paragraf, daftar, catatan kaki, daftar pustaka)
+                // Rekonstruksi dari innerHTML makalahContentDiv berdasarkan struktur baru
                 const elements = makalahContentDiv.children;
                 Array.from(elements).forEach(el => {
                     if (el.classList.contains('section-heading') || el.classList.contains('bab-heading')) {
@@ -1293,60 +1283,60 @@
                     } else if (el.tagName === 'P') {
                         fullTextToCopy += `${el.textContent.trim()}\n\n`;
                     } else if (el.tagName === 'UL') {
-                        // Handle nested lists for TOC or regular lists
+                        // Tangani daftar bersarang untuk TOC atau daftar biasa
                         const listItems = el.querySelectorAll('li');
                         listItems.forEach(li => {
                             let indent = '';
                             let currentParent = li.parentElement;
                             while (currentParent && currentParent.tagName === 'UL' && currentParent !== el) {
-                                indent += '  '; // Add two spaces for each level of nesting
+                                indent += '  '; // Tambahkan dua spasi untuk setiap level nesting
                                 currentParent = currentParent.parentElement;
                             }
 
-                            let prefix = '- '; // Default bullet
+                            let prefix = '- '; // Bullet default
                             let listStyle = window.getComputedStyle(li.parentElement).listStyleType;
                             if (listStyle === 'decimal') {
                                 prefix = `${Array.from(li.parentElement.children).indexOf(li) + 1}. `;
                             } else if (listStyle === 'lower-alpha') {
                                 prefix = `${String.fromCharCode(97 + Array.from(li.parentElement.children).indexOf(li))}. `;
                             } else if (listStyle === 'lower-roman') {
-                                // Basic roman numeral for display, not actual conversion
-                                prefix = `${Array.from(li.parentElement.children).indexOf(li) + 1}. `; // Fallback to number for copy
+                                // Angka romawi dasar untuk tampilan, bukan konversi aktual
+                                prefix = `${Array.from(li.parentElement.children).indexOf(li) + 1}. `; // Fallback ke angka untuk salinan
                             }
 
                             fullTextToCopy += `${indent}${prefix}${li.textContent.trim()}\n`;
                         });
-                        fullTextToCopy += '\n'; // Add a newline after each list
+                        fullTextToCopy += '\n'; // Tambahkan baris baru setelah setiap daftar
                     } else if (el.tagName === 'H3' || el.tagName === 'H4' || el.tagName === 'H5') {
                         fullTextToCopy += `\n${el.textContent.trim()}\n\n`;
                     }
                 });
 
 
-                console.log("Copy: Text to be copied:", fullTextToCopy);
+                console.log("Copy: Teks yang akan disalin:", fullTextToCopy);
 
-                // Use a temporary textarea to copy the formatted text
+                // Gunakan textarea sementara untuk menyalin teks yang diformat
                 const tempTextArea = document.createElement('textarea');
                 tempTextArea.value = fullTextToCopy;
                 document.body.appendChild(tempTextArea);
                 tempTextArea.select();
-                tempTextArea.setSelectionRange(0, 99999); // For mobile devices
+                tempTextArea.setSelectionRange(0, 99999); // Untuk perangkat seluler
 
                 try {
                     const successful = document.execCommand('copy');
                     if (successful) {
-                        showMessage('Paper content (outline & body) successfully copied!');
-                        console.log("Copy: Content successfully copied.");
+                        showMessage('Konten makalah (kerangka & isi) berhasil disalin!');
+                        console.log("Copy: Konten berhasil disalin.");
                     } else {
-                        showMessage('Failed to copy content. Please copy manually.');
-                        console.warn("Copy: Failed to copy content using execCommand.");
+                        showMessage('Gagal menyalin konten. Harap salin secara manual.');
+                        console.warn("Copy: Gagal menyalin konten menggunakan execCommand.");
                     }
                 } catch (err) {
-                    showMessage('Failed to copy content. Please copy manually.');
-                    console.error('Copy: Error copying text:', err);
+                    showMessage('Gagal menyalin konten. Harap salin secara manual.');
+                    console.error('Copy: Error menyalin teks:', err);
                 } finally {
                     document.body.removeChild(tempTextArea);
-                    console.log("Copy: Temporary textarea removed.");
+                    console.log("Copy: Textarea sementara dihapus.");
                 }
             });
         });
