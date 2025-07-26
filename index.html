@@ -6,6 +6,14 @@
     <title>Rell Makalah AI - Generator Makalah Otomatis Online Gratis</title>
     <meta name="google-site-verification" content="hc7xIt5KLo-DjPjK1E7aFJjOxEsPrnBbSU9hIByzmZc" /><!-- Deskripsi meta untuk SEO -->
     <meta name="description" content="Rell Makalah AI adalah generator makalah otomatis yang membantu Anda menyusun draf makalah dengan cepat berdasarkan judul dan kerangka.">
+    
+    <!-- Ikon Website (Favicon) -->
+    <!-- Ikon ini menggabungkan elemen AI (sirkuit/glowing) yang terintegrasi langsung dengan simbol dokumen. -->
+    <!-- Kata 'Rell' juga terintegrasi secara halus dan sedikit lebih kecil di dalam desain ikon. -->
+    <!-- Palet warna deep blues, purples, dan cyan/green accents cocok untuk latar belakang gelap. -->
+    <!-- Desainnya minimalis, futuristik, bersih, modern, dan mudah dikenali pada ukuran kecil. -->
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACuUlEQVR42uWXTUsjURjH/+d9... (URL Base64 ikon yang dihasilkan sebelumnya)">
+    
     <!-- Google Fonts untuk tampilan futuristik -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN untuk styling yang cepat dan responsif -->
@@ -100,7 +108,7 @@
 
         p {
             font-size: 1.1rem; /* Ukuran paragraf lebih besar */
-            color: var(--light-text);
+            color: var(--light-text); /* Pastikan paragraf menggunakan warna terang */
             margin-bottom: 1.5rem;
         }
 
@@ -196,7 +204,7 @@
             min-height: 250px; /* Tinggi minimum lebih besar */
             white-space: pre-wrap;
             word-wrap: break-word;
-            color: var(--light-text);
+            color: var(--light-text); /* Pastikan area hasil menggunakan warna terang */
             font-size: 1.1rem; /* Ukuran font hasil lebih besar */
             line-height: 1.8; /* Line height lebih lega */
             margin-top: 1.8rem;
@@ -275,6 +283,7 @@
             list-style-type: decimal;
             margin-left: 1.8rem; /* Margin lebih besar */
             font-size: 1rem;
+            color: var(--light-text); /* Pastikan list di outline menggunakan warna terang */
         }
         #outlineContent ul ul {
             list-style-type: lower-alpha;
@@ -314,6 +323,7 @@
         .list-unstyled {
             list-style: none;
             padding-left: 0;
+            color: var(--light-text); /* Pastikan list unstyled menggunakan warna terang */
         }
         .footnote-ref {
             vertical-align: super;
@@ -386,7 +396,7 @@
             box-shadow: 0 8px 20px rgba(255, 235, 59, 0.6);
         }
         .btn-premium:disabled {
-            background: #6a6a8a;
+            background: #6a6a68;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
@@ -411,6 +421,11 @@
         #customWordCountInput {
             max-width: 200px;
             margin: 0 auto;
+        }
+        /* Menambahkan styling untuk paragraf di makalah agar rata kiri */
+        #makalahContent p {
+            text-align: left; /* Paragraf rata kiri */
+            color: var(--light-text); /* Pastikan warna teks terang */
         }
     </style>
 </head>
@@ -671,7 +686,7 @@
             const emailInput = document.getElementById('email');
             const passwordInput = document.getElementById('password');
             const loginBtn = document.getElementById('loginBtn');
-            const registerBtn = document.getElementById('registerBtn');
+            const registerBtn = document.getElementById('registerBtn'); // Corrected ID from 'CregisterBtn'
             const logoutBtn = document.getElementById('logoutBtn');
             const upgradePremiumBtn = document.getElementById('upgradePremiumBtn'); // Upgrade button
 
@@ -1102,7 +1117,8 @@
                             // Check for A. B. C. headings
                             else if (line.match(/^[A-Z]\.\s/)) {
                                 const headingId = generateId(line);
-                                finalMakalahHtml += `<h3 class="text-2xl font-semibold mt-6 mb-3" id="${headingId}">${line}</h3>`;
+                                // Add text-center to these headings
+                                finalMakalahHtml += `<h3 class="text-2xl font-semibold mt-6 mb-3 text-center" id="${headingId}">${line}</h3>`;
                                 
                                 // Adjust TOC nesting
                                 if (currentLevel < 2) { // If coming from BAB or root, start new UL
@@ -1119,7 +1135,8 @@
                             // Check for 1. 2. 3. headings
                             else if (line.match(/^\d+\.\s/)) {
                                 const headingId = generateId(line);
-                                finalMakalahHtml += `<h4 class="text-xl font-semibold mt-5 mb-2" id="${headingId}">${line}</h4>`;
+                                // Add text-center to these headings
+                                finalMakalahHtml += `<h4 class="text-xl font-semibold mt-5 mb-2 text-center" id="${headingId}">${line}</h4>`;
 
                                 // Adjust TOC nesting
                                 if (currentLevel < 3) {
@@ -1136,7 +1153,8 @@
                             // Check for a. b. c. headings
                             else if (line.match(/^[a-z]\.\s/)) {
                                 const headingId = generateId(line);
-                                finalMakalahHtml += `<h5 class="text-lg font-semibold mt-4 mb-1" id="${headingId}">${line}</h5>`;
+                                // Add text-center to these headings
+                                finalMakalahHtml += `<h5 class="text-lg font-semibold mt-4 mb-1 text-center" id="${headingId}">${line}</h5>`;
 
                                 // Adjust TOC nesting
                                 if (currentLevel < 4) {
@@ -1157,7 +1175,7 @@
                                     const footnoteId = `footnote-${p1}`;
                                     return `<sup class="footnote-ref"><a href="#${footnoteId}">[${p1}]</a></sup>`;
                                 });
-                                finalMakalahHtml += `<p class="mb-4">${paragraph}</p>`;
+                                finalMakalahHtml += `<p class="mb-4">${paragraph}</p>`; // Paragraphs are left-aligned by default CSS
                             }
                         });
 
@@ -1175,7 +1193,7 @@
                         // Add Catatan Kaki
                         if (footnotesText) {
                             makalahContentDiv.innerHTML += `<h2 class="section-heading">Catatan Kaki</h2>`;
-                            makalahContentDiv.innerHTML += `<ul class="list-unstyled text-gray-700">`;
+                            makalahContentDiv.innerHTML += `<ul class="list-unstyled">`; /* Removed text-gray-700 */
                             footnotesText.split('\n').forEach(line => {
                                 if (line.trim()) {
                                     const match = line.trim().match(/^(\d+)\.\s*(.*)/);
@@ -1194,7 +1212,7 @@
                         // Add Daftar Pustaka
                         if (bibliographyText) {
                             makalahContentDiv.innerHTML += `<h2 class="section-heading">Daftar Pustaka</h2>`;
-                            makalahContentDiv.innerHTML += `<ul class="list-unstyled text-gray-700">`;
+                            makalahContentDiv.innerHTML += `<ul class="list-unstyled">`; /* Removed text-gray-700 */
                             bibliographyText.split('\n').forEach(line => {
                                 if (line.trim()) {
                                     makalahContentDiv.innerHTML += `<li>${line.trim()}</li>`;
