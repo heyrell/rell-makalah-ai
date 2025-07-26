@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rell Makalah AI - Generator Makalah Otomatis Online Gratis</title>
-    <meta name="google-site-verification" content="hc7xIt5KLo-DjPjK1E7aFJjOxEsPrnBbSU9hIByzmZc" />
-<!-- Deskripsi meta untuk SEO -->
+    <meta name="google-site-verification" content="hc7xIt5KLo-DjPjK1E7aFJjOxEsPrnBbSU9hIByzmZc" /><!-- Deskripsi meta untuk SEO -->
     <meta name="description" content="Rell Makalah AI adalah generator makalah otomatis yang membantu Anda menyusun draf makalah dengan cepat berdasarkan judul dan kerangka.">
     <!-- Google Fonts untuk tampilan futuristik -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -487,11 +486,10 @@
         if (typeof __firebase_config !== 'undefined' && __firebase_config) {
             try {
                 firebaseConfig = JSON.parse(__firebase_config);
-                console.log("Firebase: Menggunakan konfigurasi dari Canvas.");
+                console.log("Firebase Init: Menggunakan konfigurasi dari Canvas.");
             } catch (e) {
-                console.error("Firebase: Error parsing __firebase_config:", e);
-                // Fallback ke konfigurasi hardcode jika parsing gagal
-                console.log("Firebase: Gagal parsing konfigurasi Canvas, menggunakan konfigurasi hardcode.");
+                console.error("Firebase Init: Error parsing __firebase_config:", e);
+                console.log("Firebase Init: Gagal parsing konfigurasi Canvas, menggunakan konfigurasi hardcode.");
                 firebaseConfig = {
                     apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914", // GANTI DENGAN KUNCI API FIREBASE ANDA DARI KONSOL FIREBASE
                     authDomain: "rell-makalah-ai-project-89a29.firebaseapp.com", // GANTI DENGAN AUTH DOMAIN ANDA
@@ -504,7 +502,7 @@
             }
         } else {
             // Gunakan konfigurasi hardcode jika __firebase_config tidak didefinisikan (misal di GitHub Pages)
-            console.log("Firebase: __firebase_config tidak ditemukan, menggunakan konfigurasi hardcode.");
+            console.log("Firebase Init: __firebase_config tidak ditemukan, menggunakan konfigurasi hardcode.");
             firebaseConfig = {
                 apiKey: "AIzaSyA-LE_wG_0WLmvOQ51rME4t8zw-WWEi914", // GANTI DENGAN KUNCI API FIREBASE ANDA DARI KONSOL FIREBASE
                 authDomain: "rell-makalah-ai-project-89a29.firebaseapp.com", // GANTI DENGAN AUTH DOMAIN ANDA
@@ -557,15 +555,22 @@
                 analytics = getAnalytics(app);
                 console.log("Firebase: Inisialisasi Firebase berhasil.");
 
-                console.log("Firebase: Memeriksa token autentikasi awal...");
+                console.log("Firebase Auth: Memeriksa token autentikasi awal...");
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    console.log("Firebase: Mencoba masuk dengan token kustom.");
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                    console.log("Firebase: Berhasil masuk dengan token kustom.");
+                    try {
+                        console.log("Firebase Auth: Mencoba masuk dengan token kustom.");
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                        console.log("Firebase Auth: Berhasil masuk dengan token kustom.");
+                    } catch (tokenError) {
+                        console.error("Firebase Auth: Gagal masuk dengan token kustom. Mencoba anonim. Error:", tokenError);
+                        // Jika token kustom gagal, coba masuk anonim sebagai fallback
+                        await signInAnonymously(auth);
+                        console.log("Firebase Auth: Berhasil masuk secara anonim setelah token kustom gagal.");
+                    }
                 } else {
-                    console.log("Firebase: Token kustom tidak ditemukan, mencoba masuk secara anonim.");
+                    console.log("Firebase Auth: Token kustom tidak ditemukan, mencoba masuk secara anonim.");
                     await signInAnonymously(auth);
-                    console.log("Firebase: Berhasil masuk secara anonim.");
+                    console.log("Firebase Auth: Berhasil masuk secara anonim.");
                 }
 
             } catch (error) {
@@ -575,7 +580,7 @@
 
             // Listener perubahan status autentikasi
             onAuthStateChanged(auth, async (user) => {
-                console.log("Firebase Auth State Changed. User:", user);
+                console.log("Firebase Auth State Changed. User:", user ? user.uid : "null");
                 if (user) {
                     userId = user.uid;
                     authStatus.textContent = `Masuk sebagai: ${user.email || 'Pengguna Anonim'}`;
@@ -591,19 +596,29 @@
                     authTitle.textContent = "Status Akun";
 
                     // Simpan data pengguna dasar di Firestore jika belum ada
-                    const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/profile/data`);
-                    console.log("Firestore: Mencoba mendapatkan dokumen profil pengguna untuk UID:", userId);
-                    const userDocSnap = await getDoc(userDocRef);
-                    if (!userDocSnap.exists()) {
-                        console.log("Firestore: Profil pengguna tidak ditemukan, membuat yang baru.");
-                        await setDoc(userDocRef, {
-                            email: user.email || null,
-                            createdAt: new Date(),
-                            isPremium: false // Default non-premium
-                        });
-                        console.log("Firestore: Profil pengguna berhasil dibuat.");
+                    // Pastikan `db` dan `appId` sudah terinisialisasi sebelum memanggil Firestore
+                    if (db && appId) {
+                        const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/profile/data`);
+                        console.log("Firestore: Mencoba mendapatkan dokumen profil pengguna untuk UID:", userId);
+                        try {
+                            const userDocSnap = await getDoc(userDocRef);
+                            if (!userDocSnap.exists()) {
+                                console.log("Firestore: Profil pengguna tidak ditemukan, membuat yang baru.");
+                                await setDoc(userDocRef, {
+                                    email: user.email || null,
+                                    createdAt: new Date(),
+                                    isPremium: false // Default non-premium
+                                });
+                                console.log("Firestore: Profil pengguna berhasil dibuat.");
+                            } else {
+                                console.log("Firestore: Profil pengguna sudah ada.");
+                            }
+                        } catch (firestoreError) {
+                            console.error("Firestore: Error saat mengakses atau membuat profil pengguna:", firestoreError);
+                            showMessage(`Error Firestore: ${firestoreError.message}.`);
+                        }
                     } else {
-                        console.log("Firestore: Profil pengguna sudah ada.");
+                        console.warn("Firestore: Database atau App ID belum terinisialisasi. Tidak dapat menyimpan profil pengguna.");
                     }
                 } else {
                     userId = null;
@@ -905,7 +920,7 @@
                                     formattedMakalah += `<li>${line.trim()}</li>`;
                                 }
                             });
-                            formattedMakalah += `</ul>`;
+                            bibliographyText += `</ul>`;
                         }
 
 
