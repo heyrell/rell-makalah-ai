@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rell Makalah AI - Generator Makalah Otomatis Online Gratis</title>
     <meta name="google-site-verification" content="hc7xIt5KLo-DjPjK1E7aFJjOxEsPrnBbSU9hIByzmZc" />
-    <!-- Deskripsi meta untuk SEO -->
+<!-- Deskripsi meta untuk SEO -->
     <meta name="description" content="Rell Makalah AI adalah generator makalah otomatis yang membantu Anda menyusun draf makalah dengan cepat berdasarkan judul dan kerangka.">
     <!-- Google Fonts untuk tampilan futuristik -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -114,7 +114,9 @@
         }
         .form-group input[type="text"],
         .form-group textarea,
-        .form-group select {
+        .form-group select,
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
             width: 100%;
             padding: 1rem; /* Padding input lebih besar */
             border: 1px solid rgba(0, 188, 212, 0.4); /* Border dengan warna aksen */
@@ -126,7 +128,9 @@
         }
         .form-group input[type="text"]:focus,
         .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group select:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus {
             outline: none;
             border-color: var(--primary-blue);
             box-shadow: 0 0 0 4px rgba(0, 188, 212, 0.4); /* Efek glow saat fokus */
@@ -135,7 +139,7 @@
             min-height: 150px; /* Tinggi minimum textarea */
         }
 
-        .btn-primary {
+        .btn-primary, .btn-secondary {
             background: var(--gradient-1); /* Gradien untuk tombol utama */
             color: #ffffff;
             font-weight: 700;
@@ -150,18 +154,28 @@
             align-self: center;
             text-transform: uppercase;
             letter-spacing: 1px;
+            margin-top: 1rem; /* Jarak antar tombol */
         }
         .btn-primary:hover {
             background: var(--gradient-2); /* Gradien berbeda saat hover */
             transform: translateY(-3px) scale(1.02);
             box-shadow: 0 8px 20px rgba(0, 230, 118, 0.5); /* Efek glow lebih kuat */
         }
-        .btn-primary:disabled {
+        .btn-primary:disabled, .btn-secondary:disabled {
             background: #4a4a68; /* Warna abu-abu saat dinonaktifkan */
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
             opacity: 0.7;
+        }
+
+        .btn-secondary {
+            background: #4a4a68; /* Warna abu-abu untuk tombol sekunder */
+            box-shadow: 0 5px 15px rgba(74, 74, 104, 0.4);
+        }
+        .btn-secondary:hover {
+            background: #6a6a8a;
+            box-shadow: 0 8px 20px rgba(106, 106, 138, 0.5);
         }
 
         .loading-indicator {
@@ -313,6 +327,42 @@
         .footnote-ref:hover {
             text-decoration: underline;
         }
+
+        /* Styling untuk Auth Section */
+        #authSection {
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(0, 188, 212, 0.2);
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        #authSection h3 {
+            font-size: 1.8rem;
+            font-family: var(--font-orbitron);
+            color: var(--primary-blue);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        #authStatus {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--accent-green);
+        }
+        #authStatus.logged-out {
+            color: var(--accent-red);
+        }
+        .auth-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap; /* Wrap buttons on small screens */
+        }
+        .auth-buttons .btn-primary, .auth-buttons .btn-secondary {
+            margin-top: 0.5rem; /* Reduce margin top for auth buttons */
+        }
     </style>
 </head>
 <body>
@@ -323,6 +373,27 @@
         <p class="owner-text">
             own by Ver3l4U
         </p>
+
+        <!-- Bagian Autentikasi -->
+        <div id="authSection">
+            <h3 id="authTitle">Masuk / Daftar</h3>
+            <div id="authStatus" class="logged-out">Anda belum masuk.</div>
+            <div id="authForm" class="flex flex-col gap-4">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" placeholder="Minimal 6 karakter">
+                </div>
+                <div class="auth-buttons">
+                    <button id="loginBtn" class="btn-primary">Masuk</button>
+                    <button id="registerBtn" class="btn-secondary">Daftar</button>
+                    <button id="logoutBtn" class="btn-secondary hidden">Keluar</button>
+                </div>
+            </div>
+        </div>
 
         <p class="text-md text-gray-600 text-center mb-6">
             Masukkan judul dan kerangka makalah Anda (opsional), lalu biarkan AI membantu menyusun draf awal.
@@ -396,7 +467,20 @@
 
     <div id="messageBox" class="message-box"></div>
 
-    <script>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase instances
+        let app, auth, db;
+        let userId = null; // Untuk menyimpan UID pengguna yang sedang login
+
+        // Deklarasikan appId dan firebaseConfig secara global di dalam cakupan modul
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
         // Fungsi untuk menampilkan pesan temporer
         function showMessage(message, duration = 2000) {
             const messageBox = document.getElementById('messageBox');
@@ -407,7 +491,7 @@
             }, duration);
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const judulMakalahInput = document.getElementById('judulMakalah');
             const kerangkaMakalahTextarea = document.getElementById('kerangkaMakalah');
             const panjangMakalahSelect = document.getElementById('panjangMakalah');
@@ -419,6 +503,178 @@
             const makalahContentDiv = document.getElementById('makalahContent');
             const copyContentBtn = document.getElementById('copyContentBtn');
 
+            // Elemen Autentikasi
+            const authSection = document.getElementById('authSection');
+            const authTitle = document.getElementById('authTitle');
+            const authStatus = document.getElementById('authStatus');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            // Inisialisasi Firebase
+            try {
+                // Gunakan variabel global yang sudah dideklarasikan di luar DOMContentLoaded
+                if (!firebaseConfig.apiKey) {
+                    console.warn("Firebase config is missing API Key. Ensure __firebase_config is correctly set in the environment.");
+                    // FALLBACK UNTUK GITHUB PAGES:
+                    // Jika Anda menjalankan ini di GitHub Pages, Anda HARUS mengganti placeholder di bawah
+                    // dengan kredensial Firebase Anda yang sebenarnya dari Firebase Console.
+                    // Ini adalah KUNCI API FIREBASE yang BERBEDA dari Kunci API Generative Language.
+                    // Contoh:
+                    // firebaseConfig.apiKey = "AIzaSyB4_YOUR_FIREBASE_API_KEY_HERE";
+                    // firebaseConfig.authDomain = "your-project-id.firebaseapp.com";
+                    // firebaseConfig.projectId = "your-project-id";
+                    // ... tambahkan konfigurasi Firebase lainnya jika diperlukan untuk GitHub Pages
+
+                    // HANYA UNTUK DEBUGGING LOKAL DI GITHUB PAGES (Ganti dengan data Anda):
+                    // firebaseConfig.apiKey = "YOUR_FIREBASE_API_KEY_HERE";
+                    // firebaseConfig.authDomain = "YOUR_FIREBASE_AUTH_DOMAIN_HERE";
+                    // firebaseConfig.projectId = "YOUR_FIREBASE_PROJECT_ID_HERE";
+                }
+
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Autentikasi awal dengan token kustom dari Canvas atau anonim
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    // Jika tidak ada token kustom (misal di GitHub Pages), coba login anonim
+                    await signInAnonymously(auth);
+                }
+
+            } catch (error) {
+                console.error("Error initializing Firebase or signing in:", error);
+                showMessage("Gagal menginisialisasi Firebase. Fitur akun mungkin tidak berfungsi.");
+            }
+
+            // Listener perubahan status autentikasi
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    authStatus.textContent = `Masuk sebagai: ${user.email || 'Pengguna Anonim'}`;
+                    authStatus.classList.remove('logged-out');
+                    authStatus.classList.add('logged-in');
+                    loginBtn.classList.add('hidden');
+                    registerBtn.classList.add('hidden');
+                    logoutBtn.classList.remove('hidden');
+                    emailInput.value = user.email || '';
+                    emailInput.disabled = true;
+                    passwordInput.value = '';
+                    passwordInput.disabled = true;
+                    authTitle.textContent = "Status Akun";
+
+                    // Simpan data pengguna dasar di Firestore jika belum ada
+                    const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/profile/data`);
+                    const userDocSnap = await getDoc(userDocRef);
+                    if (!userDocSnap.exists()) {
+                        await setDoc(userDocRef, {
+                            email: user.email || null,
+                            createdAt: new Date(),
+                            isPremium: false // Default non-premium
+                        });
+                        console.log("User profile created in Firestore.");
+                    }
+                } else {
+                    userId = null;
+                    authStatus.textContent = `Anda belum masuk.`;
+                    authStatus.classList.remove('logged-in');
+                    authStatus.classList.add('logged-out');
+                    loginBtn.classList.remove('hidden');
+                    registerBtn.classList.remove('hidden');
+                    logoutBtn.classList.add('hidden');
+                    emailInput.value = '';
+                    emailInput.disabled = false;
+                    passwordInput.value = '';
+                    passwordInput.disabled = false;
+                    authTitle.textContent = "Masuk / Daftar";
+                }
+            });
+
+            // Event Listener untuk Register
+            registerBtn.addEventListener('click', async () => {
+                const email = emailInput.value;
+                const password = passwordInput.value;
+
+                if (!email || !password) {
+                    showMessage('Email dan password harus diisi.');
+                    return;
+                }
+                if (password.length < 6) {
+                    showMessage('Password minimal 6 karakter.');
+                    return;
+                }
+
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    // Simpan data pengguna dasar di Firestore saat registrasi berhasil
+                    const userDocRef = doc(db, `artifacts/${appId}/users/${user.uid}/profile/data`);
+                    await setDoc(userDocRef, {
+                        email: user.email,
+                        createdAt: new Date(),
+                        isPremium: false
+                    });
+                    showMessage('Registrasi berhasil! Anda sekarang masuk.');
+                } catch (error) {
+                    console.error("Error during registration:", error);
+                    let errorMessage = "Gagal mendaftar. ";
+                    if (error.code === 'auth/email-already-in-use') {
+                        errorMessage += "Email sudah terdaftar.";
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage += "Format email tidak valid.";
+                    } else if (error.code === 'auth/weak-password') {
+                        errorMessage += "Password terlalu lemah.";
+                    } else {
+                        errorMessage += error.message;
+                    }
+                    showMessage(errorMessage);
+                }
+            });
+
+            // Event Listener untuk Login
+            loginBtn.addEventListener('click', async () => {
+                const email = emailInput.value;
+                const password = passwordInput.value;
+
+                if (!email || !password) {
+                    showMessage('Email dan password harus diisi.');
+                    return;
+                }
+
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    showMessage('Login berhasil! Selamat datang kembali.');
+                } catch (error) {
+                    console.error("Error during login:", error);
+                    let errorMessage = "Gagal masuk. ";
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                        errorMessage += "Email atau password salah.";
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage += "Format email tidak valid.";
+                    } else {
+                        errorMessage += error.message;
+                    }
+                    showMessage(errorMessage);
+                }
+            });
+
+            // Event Listener untuk Logout
+            logoutBtn.addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    showMessage('Anda telah keluar.');
+                } catch (error) {
+                    console.error("Error during logout:", error);
+                    showMessage(`Gagal keluar: ${error.message}`);
+                }
+            });
+
+
+            // Logika pembuatan makalah (sama seperti sebelumnya, namun kini membutuhkan userId)
             generateBtn.addEventListener('click', async () => {
                 const judul = judulMakalahInput.value.trim();
                 const kerangka = kerangkaMakalahTextarea.value.trim();
@@ -426,6 +682,12 @@
 
                 if (!judul) {
                     showMessage('Harap masukkan judul makalah.');
+                    return;
+                }
+
+                // Cek apakah pengguna sudah login sebelum membuat makalah
+                if (!userId) {
+                    showMessage('Anda harus masuk untuk membuat makalah.');
                     return;
                 }
 
