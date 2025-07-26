@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rell Makalah AI - Generator Makalah Otomatis Online Gratis</title>
     <meta name="google-site-verification" content="hc7xIt5KLo-DjPjK1E7aFJjOxEsPrnBbSU9hIByzmZc" />
-    <!-- Deskripsi meta untuk SEO -->
+<!-- Deskripsi meta untuk SEO -->
     <meta name="description" content="Rell Makalah AI adalah generator makalah otomatis yang membantu Anda menyusun draf makalah dengan cepat berdasarkan judul dan kerangka.">
     <!-- Tailwind CSS CDN untuk styling yang cepat dan responsif -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,20 +20,30 @@
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            padding: 2rem;
+            padding: 1rem; /* Padding lebih kecil untuk mobile */
             box-sizing: border-box;
         }
         .container {
             background-color: #ffffff;
-            padding: 2.5rem;
+            padding: 1.5rem; /* Padding lebih kecil untuk mobile */
             border-radius: 1rem;
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            width: 100%;
+            width: 100%; /* Selalu 100% lebar di mobile */
+            max-width: 800px; /* Batasi lebar di desktop */
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
+        /* Media query untuk desktop */
+        @media (min-width: 768px) {
+            body {
+                padding: 2rem; /* Padding standar untuk desktop */
+            }
+            .container {
+                padding: 2.5rem; /* Padding standar untuk desktop */
+            }
+        }
+
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
