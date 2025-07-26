@@ -7,135 +7,219 @@
     <meta name="google-site-verification" content="hc7xIt5KLo-DjPjK1E7aFJjOxEsPrnBbSU9hIByzmZc" />
 <!-- Deskripsi meta untuk SEO -->
     <meta name="description" content="Rell Makalah AI adalah generator makalah otomatis yang membantu Anda menyusun draf makalah dengan cepat berdasarkan judul dan kerangka.">
+    <!-- Google Fonts untuk tampilan futuristik -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN untuk styling yang cepat dan responsif -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Menggunakan font Inter untuk tampilan modern */
+        /* Mengatur variabel CSS untuk warna dan font */
+        :root {
+            --primary-blue: #00bcd4; /* Cyan terang */
+            --secondary-purple: #8e24aa; /* Ungu */
+            --dark-bg: #1a1a2e; /* Latar belakang gelap */
+            --light-text: #e0e0e0; /* Teks terang */
+            --accent-green: #00e676; /* Hijau aksen */
+            --accent-red: #ff1744; /* Merah aksen */
+            --gradient-1: linear-gradient(90deg, #00bcd4, #8e24aa);
+            --gradient-2: linear-gradient(90deg, #00e676, #00bcd4);
+            --font-orbitron: 'Orbitron', sans-serif;
+            --font-space-mono: 'Space Mono', monospace;
+            --font-inter: 'Inter', sans-serif;
+        }
+
+        /* Styling dasar body untuk tampilan full-size dan futuristik */
         body {
-            font-family: "Inter", sans-serif;
-            background-color: #f0f4f8; /* Latar belakang abu-abu terang */
-            color: #334155; /* Warna teks utama */
+            font-family: var(--font-inter);
+            background: var(--dark-bg); /* Latar belakang gelap */
+            background-image: radial-gradient(circle at top left, rgba(0, 188, 212, 0.15) 0%, transparent 50%),
+                              radial-gradient(circle at bottom right, rgba(142, 36, 170, 0.15) 0%, transparent 50%);
+            color: var(--light-text); /* Warna teks terang */
             line-height: 1.6;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            padding: 1rem; /* Padding lebih kecil untuk mobile */
+            padding: 1rem; /* Padding responsif */
             box-sizing: border-box;
+            overflow-x: hidden; /* Mencegah scroll horizontal */
         }
+
+        /* Container utama yang responsif penuh */
         .container {
-            background-color: #ffffff;
-            padding: 1.5rem; /* Padding lebih kecil untuk mobile */
-            border-radius: 1rem;
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            width: 100%; /* Selalu 100% lebar di mobile */
-            max-width: 800px; /* Batasi lebar di desktop */
+            background-color: rgba(26, 26, 46, 0.8); /* Latar belakang semi-transparan */
+            backdrop-filter: blur(8px); /* Efek blur pada latar belakang */
+            padding: 2rem; /* Padding responsif */
+            border-radius: 1.5rem; /* Sudut lebih membulat */
+            box-shadow: 0 0 30px rgba(0, 188, 212, 0.3), 0 0 60px rgba(142, 36, 170, 0.2); /* Efek glow */
+            width: 100%; /* Selalu 100% lebar */
+            max-width: 900px; /* Batasi lebar maksimum untuk desktop */
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1.8rem; /* Jarak antar elemen lebih besar */
+            border: 1px solid rgba(0, 188, 212, 0.3); /* Border tipis */
         }
+
         /* Media query untuk desktop */
         @media (min-width: 768px) {
             body {
                 padding: 2rem; /* Padding standar untuk desktop */
             }
             .container {
-                padding: 2.5rem; /* Padding standar untuk desktop */
+                padding: 3rem; /* Padding lebih besar untuk desktop */
             }
+        }
+
+        h1 {
+            font-family: var(--font-orbitron); /* Font futuristik untuk judul utama */
+            font-size: 3.5rem; /* Ukuran lebih besar */
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            /* Efek gradien teks */
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* Fallback */
+            text-shadow: 0 0 10px rgba(0, 188, 212, 0.5), 0 0 20px rgba(142, 36, 170, 0.3);
+        }
+
+        .owner-text {
+            font-family: var(--font-space-mono); /* Font keren untuk teks owner */
+            font-size: 0.9rem; /* Ukuran sedikit lebih besar */
+            color: var(--light-text);
+            text-align: center;
+            opacity: 0.6; /* Opacity lebih tinggi agar lebih terlihat */
+            margin-top: -0.5rem; /* Naikkan sedikit agar dekat dengan judul */
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 5px rgba(0, 188, 212, 0.2);
+        }
+
+        p {
+            font-size: 1.1rem; /* Ukuran paragraf lebih besar */
+            color: var(--light-text);
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem; /* Jarak label lebih besar */
             font-weight: 600;
-            color: #334155;
+            color: var(--light-text);
+            font-size: 1.1rem; /* Ukuran label lebih besar */
         }
         .form-group input[type="text"],
         .form-group textarea,
         .form-group select {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: border-color 0.2s;
+            padding: 1rem; /* Padding input lebih besar */
+            border: 1px solid rgba(0, 188, 212, 0.4); /* Border dengan warna aksen */
+            border-radius: 0.75rem; /* Sudut lebih membulat */
+            font-size: 1.1rem; /* Ukuran font input lebih besar */
+            background-color: rgba(0, 0, 0, 0.3); /* Latar belakang input gelap transparan */
+            color: var(--light-text);
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
         .form-group input[type="text"]:focus,
         .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(0, 188, 212, 0.4); /* Efek glow saat fokus */
         }
+        .form-group textarea {
+            min-height: 150px; /* Tinggi minimum textarea */
+        }
+
         .btn-primary {
-            background-color: #3b82f6;
+            background: var(--gradient-1); /* Gradien untuk tombol utama */
             color: #ffffff;
             font-weight: 700;
-            padding: 0.75rem 1.5rem;
+            padding: 1rem 2.5rem; /* Padding tombol lebih besar */
             border: none;
             border-radius: 0.75rem;
-            font-size: 1.1rem;
+            font-size: 1.2rem; /* Ukuran font tombol lebih besar */
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.4); /* Efek shadow/glow */
             width: fit-content;
             align-self: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .btn-primary:hover {
-            background-color: #2563eb;
-            transform: translateY(-2px);
+            background: var(--gradient-2); /* Gradien berbeda saat hover */
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 230, 118, 0.5); /* Efek glow lebih kuat */
         }
+        .btn-primary:disabled {
+            background: #4a4a68; /* Warna abu-abu saat dinonaktifkan */
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+
         .loading-indicator {
             display: none;
             text-align: center;
-            margin-top: 1rem;
-            color: #475569;
+            margin-top: 1.5rem;
+            color: var(--primary-blue);
+            font-size: 1.1rem;
+            font-weight: 600;
         }
         .loading-indicator.active {
             display: block;
         }
         .result-area {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background-color: rgba(0, 0, 0, 0.3); /* Latar belakang hasil gelap transparan */
+            border: 1px solid rgba(0, 188, 212, 0.3);
             border-radius: 0.75rem;
-            padding: 1.5rem;
-            min-height: 200px;
-            white-space: pre-wrap; /* Mempertahankan spasi dan baris baru */
-            word-wrap: break-word; /* Memecah kata panjang */
-            color: #1e293b;
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-top: 1.5rem;
+            padding: 2rem; /* Padding lebih besar */
+            min-height: 250px; /* Tinggi minimum lebih besar */
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: var(--light-text);
+            font-size: 1.1rem; /* Ukuran font hasil lebih besar */
+            line-height: 1.8; /* Line height lebih lega */
+            margin-top: 1.8rem;
+            box-shadow: inset 0 0 10px rgba(0, 188, 212, 0.1);
         }
         .result-area h2 {
-            font-size: 1.75rem;
+            font-size: 2rem; /* Ukuran judul hasil lebih besar */
             font-weight: 700;
-            margin-bottom: 1rem;
-            color: #1e293b;
+            margin-bottom: 1.5rem;
+            color: var(--primary-blue);
+            text-shadow: 0 0 8px rgba(0, 188, 212, 0.4);
         }
         .warning-message {
-            background-color: #fffbeb; /* Kuning sangat terang */
-            border-left: 4px solid #f59e0b; /* Kuning oranye */
-            color: #92400e; /* Coklat oranye */
-            padding: 1rem;
-            border-radius: 0.5rem;
+            background-color: rgba(255, 235, 179, 0.2); /* Kuning sangat terang transparan */
+            border-left: 4px solid #ffc107; /* Kuning oranye */
+            color: #ffeb3b; /* Teks kuning terang */
+            padding: 1.2rem; /* Padding lebih besar */
+            border-radius: 0.75rem;
             margin-top: 1.5rem;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.2);
         }
         .copy-button {
-            background-color: #10b981; /* Warna hijau */
+            background: var(--gradient-2); /* Gradien untuk tombol salin */
             color: #ffffff;
             font-weight: 700;
-            padding: 0.75rem 1.5rem;
+            padding: 0.9rem 2rem; /* Padding tombol lebih besar */
             border-radius: 0.75rem;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
             width: fit-content;
-            align-self: flex-end; /* Posisikan di kanan bawah */
-            margin-top: 1rem;
+            align-self: flex-end;
+            margin-top: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 230, 118, 0.4);
         }
         .copy-button:hover {
-            background-color: #059669; /* Warna hijau lebih gelap saat hover */
-            transform: translateY(-2px);
+            background: var(--gradient-1);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 188, 212, 0.5);
         }
         .message-box {
             display: none;
@@ -143,65 +227,72 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #333;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: var(--accent-green);
+            padding: 20px 30px;
+            border-radius: 10px;
             z-index: 1000;
-            font-size: 1rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.5);
+            border: 1px solid var(--accent-green);
         }
 
         /* Styling untuk kerangka yang dihasilkan */
         #generatedOutlineContainer {
-            background-color: #e0e7ff; /* Latar belakang biru muda */
-            border: 1px solid #93c5fd; /* Border biru */
+            background-color: rgba(0, 188, 212, 0.1); /* Latar belakang biru muda transparan */
+            border: 1px solid rgba(0, 188, 212, 0.5); /* Border biru */
             border-radius: 0.75rem;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            color: #1e3a8a; /* Warna teks biru gelap */
+            color: var(--light-text); /* Warna teks terang */
+            box-shadow: inset 0 0 10px rgba(0, 188, 212, 0.1);
         }
         #generatedOutlineContainer h3 {
-            font-size: 1.5rem;
+            font-size: 1.6rem; /* Ukuran lebih besar */
             font-weight: 700;
             margin-bottom: 1rem;
-            color: #1e3a8a;
+            color: var(--primary-blue);
+            text-shadow: 0 0 5px rgba(0, 188, 212, 0.3);
         }
         #outlineContent ul {
-            list-style-type: decimal; /* Menggunakan angka untuk daftar utama */
-            margin-left: 1.5rem;
+            list-style-type: decimal;
+            margin-left: 1.8rem; /* Margin lebih besar */
+            font-size: 1rem;
         }
         #outlineContent ul ul {
-            list-style-type: lower-alpha; /* Menggunakan huruf untuk sub-daftar */
-            margin-left: 1.5rem;
+            list-style-type: lower-alpha;
+            margin-left: 1.8rem;
         }
         #outlineContent ul ul ul {
-            list-style-type: lower-roman; /* Menggunakan angka romawi untuk sub-sub-daftar */
-            margin-left: 1.5rem;
+            list-style-type: lower-roman;
+            margin-left: 1.8rem;
         }
         #outlineContent li {
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.5rem; /* Jarak antar list item lebih besar */
         }
 
         /* Styling untuk Bab */
         .bab-heading {
-            font-size: 2.2rem; /* Ukuran lebih besar untuk BAB */
+            font-size: 2.8rem; /* Ukuran sangat besar untuk BAB */
             font-weight: 800;
-            color: #1a202c; /* Warna teks sangat gelap */
-            margin-top: 2.5rem;
-            margin-bottom: 1.5rem;
+            color: var(--accent-green); /* Warna aksen hijau */
+            margin-top: 3.5rem; /* Margin lebih besar */
+            margin-bottom: 2rem;
             text-align: center;
             text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(0, 230, 118, 0.6);
         }
 
         /* Styling untuk Daftar Isi, Catatan Kaki, Daftar Pustaka */
         .section-heading {
-            font-size: 2rem;
+            font-size: 2.2rem; /* Ukuran lebih besar */
             font-weight: 700;
-            color: #1a202c;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
+            color: var(--primary-blue);
+            margin-top: 2.5rem;
+            margin-bottom: 1.2rem;
             text-align: center;
+            text-shadow: 0 0 10px rgba(0, 188, 212, 0.4);
         }
         .list-unstyled {
             list-style: none;
@@ -209,10 +300,11 @@
         }
         .footnote-ref {
             vertical-align: super;
-            font-size: 0.75em;
-            color: #3b82f6;
+            font-size: 0.8em; /* Ukuran sedikit lebih besar */
+            color: var(--accent-green); /* Warna aksen hijau */
             text-decoration: none;
-            margin-left: 2px;
+            margin-left: 3px;
+            font-weight: 700;
         }
         .footnote-ref:hover {
             text-decoration: underline;
@@ -224,7 +316,7 @@
         <h1 class="text-3xl font-extrabold text-gray-800 text-center mb-0">
             Rell Makalah AI
         </h1>
-        <p class="text-xs text-gray-500 text-center opacity-70 mt-1 mb-4">
+        <p class="owner-text">
             own by Ver3l4U
         </p>
 
@@ -358,7 +450,7 @@
                         wordCountHint = 'Isi makalah harus sekitar 1500 kata.';
                     } else if (panjang === '3000_kata') {
                         wordCountHint = 'Isi makalah harus sekitar 3000 kata. Berikan detail yang komprehensif untuk setiap bagian.';
-                    } else if (panjang === '5000_kata') {
+                    } else if (pananjang === '5000_kata') {
                         wordCountHint = 'Isi makalah harus sekitar 5000 kata. Berikan detail yang sangat komprehensif dan mendalam untuk setiap bagian.';
                     }
                     prompt += `${wordCountHint}\n\n`;
@@ -523,15 +615,72 @@
             });
 
             copyContentBtn.addEventListener('click', () => {
-                // Salin seluruh teks dari kerangka dan isi makalah
-                const outlineTextToCopy = outlineContentDiv.innerText;
-                const makalahTextToCopy = makalahContentDiv.innerText;
-                const fullTextToCopy = `Kerangka Makalah:\n${outlineTextToCopy}\n\nIsi Makalah:\n${makalahTextToCopy}`;
+                let fullTextToCopy = '';
 
-                if (document.execCommand('copy')) {
-                    showMessage('Konten makalah (kerangka & isi) berhasil disalin!');
-                } else {
+                // 1. Salin Kerangka Makalah yang Dihasilkan (jika terlihat)
+                if (!generatedOutlineContainer.classList.contains('hidden')) {
+                    fullTextToCopy += 'KERANGKA MAKALAH YANG DIHASILKAN:\n\n';
+                    const outlineElements = outlineContentDiv.querySelectorAll('ul, li, p');
+                    outlineElements.forEach(el => {
+                        if (el.tagName === 'LI') {
+                            let prefix = '';
+                            let parentUl = el.closest('ul');
+                            if (parentUl) {
+                                let listStyle = window.getComputedStyle(parentUl).listStyleType;
+                                if (listStyle === 'decimal') {
+                                    prefix = `${Array.from(parentUl.children).indexOf(el) + 1}. `;
+                                } else if (listStyle === 'lower-alpha') {
+                                    prefix = `${String.fromCharCode(97 + Array.from(parentUl.children).indexOf(el))}. `;
+                                } else {
+                                    prefix = '- '; // Default untuk disc, square, dll.
+                                }
+                            } else {
+                                prefix = '- '; // Fallback jika tidak dalam daftar
+                            }
+                            fullTextToCopy += `${prefix}${el.textContent.trim()}\n`;
+                        } else if (el.tagName === 'P') {
+                            fullTextToCopy += `${el.textContent.trim()}\n`;
+                        }
+                    });
+                    fullTextToCopy += '\n';
+                }
+
+                // 2. Salin Konten Makalah Utama (termasuk Bab, sub-judul, paragraf, daftar, catatan kaki, daftar pustaka)
+                fullTextToCopy += 'ISI MAKALAH:\n\n';
+                const mainContentElements = makalahContentDiv.children; // Dapatkan semua anak langsung (h2, h3, p, ul)
+
+                Array.from(mainContentElements).forEach(element => {
+                    if (element.classList.contains('section-heading') || element.classList.contains('bab-heading')) {
+                        fullTextToCopy += `\n${element.textContent.trim().toUpperCase()}\n\n`;
+                    } else if (element.tagName === 'P') {
+                        fullTextToCopy += `${element.textContent.trim()}\n\n`;
+                    } else if (element.tagName === 'UL') {
+                        Array.from(element.querySelectorAll('li')).forEach(li => {
+                            fullTextToCopy += `- ${li.textContent.trim()}\n`;
+                        });
+                        fullTextToCopy += '\n';
+                    }
+                });
+
+                // Gunakan textarea sementara untuk menyalin teks yang sudah diformat
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = fullTextToCopy;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                tempTextArea.setSelectionRange(0, 99999); // Untuk perangkat seluler
+
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        showMessage('Konten makalah (kerangka & isi) berhasil disalin!');
+                    } else {
+                        showMessage('Gagal menyalin konten. Silakan salin secara manual.');
+                    }
+                } catch (err) {
                     showMessage('Gagal menyalin konten. Silakan salin secara manual.');
+                    console.error('Error copying text:', err);
+                } finally {
+                    document.body.removeChild(tempTextArea);
                 }
             });
         });
